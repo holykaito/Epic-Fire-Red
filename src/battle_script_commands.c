@@ -3171,7 +3171,7 @@ static void Cmd_getexp(void)
                 if (*exp == 0)
                     *exp = 1;
 
-                gExpShareExp = calculatedExp / 2 / viaExpShare;
+                gExpShareExp = calculatedExp / viaExpShare;
                 if (gExpShareExp == 0)
                     gExpShareExp = 1;
             }
@@ -3228,9 +3228,14 @@ static void Cmd_getexp(void)
                         gBattleMoveDamage = 0;
 
                     if (holdEffect == HOLD_EFFECT_EXP_SHARE)
-                        gBattleMoveDamage += gExpShareExp;
+                        {
+                        if (gBattleStruct->sentInPokes & 1)
+                            gBattleMoveDamage = gExpShareExp;
+                        else
+                            gBattleMoveDamage += gExpShareExp;
+                        }
                     if (holdEffect == HOLD_EFFECT_LUCKY_EGG)
-                        gBattleMoveDamage = (gBattleMoveDamage * 150) / 100;
+                        gBattleMoveDamage = (gBattleMoveDamage * 200) / 100;
                     if (gBattleTypeFlags & BATTLE_TYPE_TRAINER)
                         gBattleMoveDamage = (gBattleMoveDamage * 150) / 100;
                     if (IsTradedMon(&gPlayerParty[gBattleStruct->expGetterMonId])
