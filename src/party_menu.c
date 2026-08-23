@@ -128,7 +128,7 @@ struct PartyMenuInternal
     u32 spriteIdCancelPokeball:7;
     u32 messageId:14;
     u8 windowId[3];
-    u8 actions[8];
+    u8 actions[9];
     u8 numActions;
     u16 palBuffer[BG_PLTT_SIZE / sizeof(u16)];
     s16 data[16];
@@ -2978,6 +2978,30 @@ static void SetPartyMonFieldSelectionActions(struct Pokemon *mons, u8 slotId)
             }
         }
     }
+    // Cho Flash xuất hiện dù Pokémon không giữ Flash trong moveset
+    if (!MonKnowsMove(&mons[slotId], MOVE_FLASH)
+     && CanMonUseHM(&mons[slotId], MOVE_FLASH)
+     && gMapHeader.cave == TRUE
+     && !FlagGet(FLAG_SYS_FLASH_ACTIVE))
+    {
+        AppendToList(
+            sPartyMenuInternal->actions,
+            &sPartyMenuInternal->numActions,
+            FIELD_MOVE_FLASH + CURSOR_OPTION_FIELD_MOVES
+        );
+    }
+
+    // Cho Fly xuất hiện dù Pokémon không giữ Fly trong moveset
+    if (!MonKnowsMove(&mons[slotId], MOVE_FLY)
+     && CanMonUseHM(&mons[slotId], MOVE_FLY)
+     && Overworld_MapTypeAllowsTeleportAndFly(gMapHeader.mapType) == TRUE)
+    {
+        AppendToList(
+            sPartyMenuInternal->actions,
+            &sPartyMenuInternal->numActions,
+            FIELD_MOVE_FLY + CURSOR_OPTION_FIELD_MOVES
+        );
+    }
     if (GetMonData(&mons[1], MON_DATA_SPECIES) != SPECIES_NONE)
         AppendToList(sPartyMenuInternal->actions, &sPartyMenuInternal->numActions, CURSOR_OPTION_SWITCH);
     if (ItemIsMail(GetMonData(&mons[slotId], MON_DATA_HELD_ITEM)))
@@ -4717,6 +4741,48 @@ u16 ItemIdToBattleMoveId(u16 item)
     u16 tmNumber = item - ITEM_TM01_FOCUS_PUNCH;
 
     return sTMHMMoves[tmNumber];
+}
+
+u16 GetHMItemIdByMove(u16 move)
+{
+    u16 item;
+
+    for (item = ITEM_HM01; item <= ITEM_HM08; item++)
+    {
+        if (ItemIdToBattleMoveId(item) == move)
+            return item;
+    }
+
+    return ITEM_NONE;
+}
+
+bool8 CanMonUseHM(struct Pokemon *mon, u16 move)
+{
+    u16 item = GetHMItemIdByMove(move);
+
+    if (item == ITEM_NONE
+     || GetMonData(mon, MON_DATA_SPECIES) == SPECIES_NONE
+     || GetMonData(mon, MON_DATA_IS_EGG)
+     || !CheckBagHasItem(item, 1))
+        return FALSE;
+
+    return CanMonLearnTMHM(mon, item - ITEM_TM01_FOCUS_PUNCH);
+}
+
+u8 GetPartyMonIdForHM(u16 move)
+{
+    u8 i;
+
+    for (i = 0; i < PARTY_SIZE; i++)
+    {
+        if (GetMonData(&gPlayerParty[i], MON_DATA_SPECIES) == SPECIES_NONE)
+            break;
+
+        if (CanMonUseHM(&gPlayerParty[i], move))
+            return i;
+    }
+
+    return PARTY_SIZE;
 }
 
 bool8 IsMoveHm(u16 move)

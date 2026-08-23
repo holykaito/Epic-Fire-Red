@@ -1774,24 +1774,37 @@ bool8 ScrCmd_setmonmove(struct ScriptContext * ctx)
     return FALSE;
 }
 
-bool8 ScrCmd_checkpartymove(struct ScriptContext * ctx)
+bool8 ScrCmd_checkpartymove(struct ScriptContext *ctx)
 {
     u8 i;
     u16 moveId = ScriptReadHalfword(ctx);
+    u16 hmItem = GetHMItemIdByMove(moveId);
 
     gSpecialVar_Result = PARTY_SIZE;
+
     for (i = 0; i < PARTY_SIZE; i++)
     {
-        u16 species = GetMonData(&gPlayerParty[i], MON_DATA_SPECIES, NULL);
-        if (!species)
+        u16 species = GetMonData(
+            &gPlayerParty[i],
+            MON_DATA_SPECIES,
+            NULL
+        );
+
+        if (species == SPECIES_NONE)
             break;
-        if (!GetMonData(&gPlayerParty[i], MON_DATA_IS_EGG) && MonKnowsMove(&gPlayerParty[i], moveId) == TRUE)
+
+        if (!GetMonData(&gPlayerParty[i], MON_DATA_IS_EGG)
+         && ((hmItem != ITEM_NONE
+           && CanMonUseHM(&gPlayerParty[i], moveId))
+          || (hmItem == ITEM_NONE
+           && MonKnowsMove(&gPlayerParty[i], moveId))))
         {
             gSpecialVar_Result = i;
             gSpecialVar_0x8004 = species;
             break;
         }
     }
+
     return FALSE;
 }
 

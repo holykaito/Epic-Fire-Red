@@ -1183,19 +1183,8 @@ u8 GetPlayerAvatarGenderByGraphicsId(u8 gfxId)
 
 bool8 PartyHasMonWithSurf(void)
 {
-    u8 i;
-
-    if (!TestPlayerAvatarFlags(PLAYER_AVATAR_FLAG_SURFING))
-    {
-        for (i = 0; i < PARTY_SIZE; i++)
-        {
-            if (GetMonData(&gPlayerParty[i], MON_DATA_SPECIES) == SPECIES_NONE)
-                break;
-            if (MonKnowsMove(&gPlayerParty[i], MOVE_SURF))
-                return TRUE;
-        }
-    }
-    return FALSE;
+    return !TestPlayerAvatarFlags(PLAYER_AVATAR_FLAG_SURFING)
+        && GetPartyMonIdForHM(MOVE_SURF) != PARTY_SIZE;
 }
 
 bool8 IsPlayerSurfingNorth(void)
