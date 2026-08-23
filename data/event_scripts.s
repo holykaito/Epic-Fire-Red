@@ -1233,16 +1233,184 @@ EventScript_VsSeekerChargingDone::
 	end
 
 Common_EventScript_UnionRoomAttendant::
-	call CableClub_EventScript_UnionRoomAttendant
-	end
+	goto IVChecker_EventScript
 
 Common_EventScript_WirelessClubAttendant::
-	call CableClub_EventScript_WirelessClubAttendant
-	end
+	goto EVChecker_EventScript
 
 Common_EventScript_DirectCornerAttendant::
-	call CableClub_EventScript_DirectCornerAttendant
+	goto HappinessChecker_EventScript
+
+EVChecker_EventScript::
+	lock
+	faceplayer
+	msgbox EVChecker_Text_Introduction, MSGBOX_YESNO
+	goto_if_eq VAR_RESULT, NO, EVChecker_EventScript_Cancel
+
+	msgbox EVChecker_Text_ChooseMon
+	special ChoosePartyMon
+	waitstate
+	lock
+	faceplayer
+
+	goto_if_ge VAR_0x8004, PARTY_SIZE, EVChecker_EventScript_Cancel
+
+	special IsSelectedMonEgg
+	goto_if_eq VAR_RESULT, TRUE, EVChecker_EventScript_Egg
+
+	special BufferSelectedMonEVsPage1
+	msgbox EVChecker_Text_Page1
+
+	special BufferSelectedMonEVsPage2
+	msgbox EVChecker_Text_Page2
+
+	release
 	end
+
+EVChecker_EventScript_Egg::
+	msgbox EVChecker_Text_Egg
+	release
+	end
+
+EVChecker_EventScript_Cancel::
+	msgbox EVChecker_Text_Cancel
+	release
+	end
+
+EVChecker_Text_Introduction:
+	.string "I can examine your POKéMON's\n"
+	.string "EFFORT VALUES.\p"
+	.string "Would you like me to check?$"
+
+EVChecker_Text_ChooseMon:
+	.string "Which POKéMON should I examine?$"
+
+EVChecker_Text_Page1:
+	.string "{STR_VAR_1}'s EVs:\n"
+	.string "HP: {STR_VAR_2}  Attack: {STR_VAR_3}\l"
+	.string "Defense: {STR_VAR_4}.$"
+
+EVChecker_Text_Page2:
+	.string "Speed: {STR_VAR_1}\n"
+	.string "Sp. Atk: {STR_VAR_2}\l"
+	.string "Sp. Def: {STR_VAR_3}  Total: {STR_VAR_4}.$"
+
+EVChecker_Text_Egg:
+	.string "I can't examine an EGG.$"
+
+EVChecker_Text_Cancel:
+	.string "Come back whenever you want.$"
+
+IVChecker_EventScript::
+	lock
+	faceplayer
+	msgbox IVChecker_Text_Introduction, MSGBOX_YESNO
+	goto_if_eq VAR_RESULT, NO, IVChecker_EventScript_Cancel
+
+	msgbox IVChecker_Text_ChooseMon
+	special ChoosePartyMon
+	waitstate
+	lock
+	faceplayer
+
+	goto_if_ge VAR_0x8004, PARTY_SIZE, IVChecker_EventScript_Cancel
+
+	special IsSelectedMonEgg
+	goto_if_eq VAR_RESULT, TRUE, IVChecker_EventScript_Egg
+
+	special BufferSelectedMonIVsPage1
+	msgbox IVChecker_Text_Page1
+
+	special BufferSelectedMonIVsPage2
+	msgbox IVChecker_Text_Page2
+
+	release
+	end
+
+IVChecker_EventScript_Egg::
+	msgbox IVChecker_Text_Egg
+	release
+	end
+
+IVChecker_EventScript_Cancel::
+	msgbox IVChecker_Text_Cancel
+	release
+	end
+
+IVChecker_Text_Introduction:
+	.string "I can examine your POKéMON's\n"
+	.string "individual strengths.\p"
+	.string "Would you like me to check?$"
+
+IVChecker_Text_ChooseMon:
+	.string "Which POKéMON should I examine?$"
+
+IVChecker_Text_Page1:
+	.string "{STR_VAR_1}'s IVs:\n"
+	.string "HP: {STR_VAR_2}  Attack: {STR_VAR_3}\l"
+	.string "Defense: {STR_VAR_4}.$"
+
+IVChecker_Text_Page2:
+	.string "Speed: {STR_VAR_1}\n"
+	.string "Sp. Atk: {STR_VAR_2}  Sp. Def: {STR_VAR_3}\l"
+	.string "Perfect IVs: {STR_VAR_4}/6.$"
+
+IVChecker_Text_Egg:
+	.string "I can't examine an EGG.$"
+
+IVChecker_Text_Cancel:
+	.string "Come back whenever you want.$"
+
+HappinessChecker_EventScript::
+	lock
+	faceplayer
+	msgbox HappinessChecker_Text_Introduction, MSGBOX_YESNO
+	goto_if_eq VAR_RESULT, NO, HappinessChecker_EventScript_Cancel
+
+	msgbox HappinessChecker_Text_ChooseMon
+	special ChoosePartyMon
+	waitstate
+	lock
+	faceplayer
+
+	goto_if_ge VAR_0x8004, PARTY_SIZE, HappinessChecker_EventScript_Cancel
+
+	special IsSelectedMonEgg
+	goto_if_eq VAR_RESULT, TRUE, HappinessChecker_EventScript_Egg
+
+	special BufferSelectedMonHappiness
+	msgbox HappinessChecker_Text_Result
+
+	release
+	end
+
+HappinessChecker_EventScript_Egg::
+	msgbox HappinessChecker_Text_Egg
+	release
+	end
+
+HappinessChecker_EventScript_Cancel::
+	msgbox HappinessChecker_Text_Cancel
+	release
+	end
+
+HappinessChecker_Text_Introduction:
+	.string "I can tell how happy your\n"
+	.string "POKéMON is.\p"
+	.string "Would you like me to check?$"
+
+HappinessChecker_Text_ChooseMon:
+	.string "Which POKéMON should I examine?$"
+
+HappinessChecker_Text_Result:
+	.string "{STR_VAR_1}'s Happiness is\n"
+	.string "{STR_VAR_2} out of 255.$"
+
+HappinessChecker_Text_Egg:
+	.string "I can't examine an EGG.$"
+
+HappinessChecker_Text_Cancel:
+	.string "Come back whenever you want.$"
 
 VermilionCity_PokemonCenter_1F_EventScript_VSSeekerWoman::
 	lock

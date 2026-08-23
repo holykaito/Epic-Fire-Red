@@ -2,6 +2,7 @@
 #include "gflib.h"
 #include "data.h"
 #include "script.h"
+#include "string_util.h"
 #include "overworld.h"
 #include "party_menu.h"
 #include "field_fadetransition.h"
@@ -105,4 +106,153 @@ void IsSelectedMonEgg(void)
         gSpecialVar_Result = TRUE;
     else
         gSpecialVar_Result = FALSE;
+}
+
+void BufferSelectedMonEVsPage1(void)
+{
+    struct Pokemon *mon = &gPlayerParty[gSpecialVar_0x8004];
+
+    GetMonNickname(mon, gStringVar1);
+
+    ConvertIntToDecimalStringN(
+        gStringVar2,
+        GetMonData(mon, MON_DATA_HP_EV),
+        STR_CONV_MODE_LEFT_ALIGN,
+        3
+    );
+
+    ConvertIntToDecimalStringN(
+        gStringVar3,
+        GetMonData(mon, MON_DATA_ATK_EV),
+        STR_CONV_MODE_LEFT_ALIGN,
+        3
+    );
+
+    ConvertIntToDecimalStringN(
+        gStringVar4,
+        GetMonData(mon, MON_DATA_DEF_EV),
+        STR_CONV_MODE_LEFT_ALIGN,
+        3
+    );
+}
+
+void BufferSelectedMonEVsPage2(void)
+{
+    struct Pokemon *mon = &gPlayerParty[gSpecialVar_0x8004];
+    u16 total = 0;
+    u8 i;
+
+    for (i = 0; i < NUM_STATS; i++)
+        total += GetMonData(mon, MON_DATA_HP_EV + i);
+
+    ConvertIntToDecimalStringN(
+        gStringVar1,
+        GetMonData(mon, MON_DATA_SPEED_EV),
+        STR_CONV_MODE_LEFT_ALIGN,
+        3
+    );
+
+    ConvertIntToDecimalStringN(
+        gStringVar2,
+        GetMonData(mon, MON_DATA_SPATK_EV),
+        STR_CONV_MODE_LEFT_ALIGN,
+        3
+    );
+
+    ConvertIntToDecimalStringN(
+        gStringVar3,
+        GetMonData(mon, MON_DATA_SPDEF_EV),
+        STR_CONV_MODE_LEFT_ALIGN,
+        3
+    );
+
+    ConvertIntToDecimalStringN(
+        gStringVar4,
+        total,
+        STR_CONV_MODE_LEFT_ALIGN,
+        4
+    );
+}
+
+void BufferSelectedMonIVsPage1(void)
+{
+    struct Pokemon *mon = &gPlayerParty[gSpecialVar_0x8004];
+
+    GetMonNickname(mon, gStringVar1);
+
+    ConvertIntToDecimalStringN(
+        gStringVar2,
+        GetMonData(mon, MON_DATA_HP_IV),
+        STR_CONV_MODE_LEFT_ALIGN,
+        2
+    );
+
+    ConvertIntToDecimalStringN(
+        gStringVar3,
+        GetMonData(mon, MON_DATA_ATK_IV),
+        STR_CONV_MODE_LEFT_ALIGN,
+        2
+    );
+
+    ConvertIntToDecimalStringN(
+        gStringVar4,
+        GetMonData(mon, MON_DATA_DEF_IV),
+        STR_CONV_MODE_LEFT_ALIGN,
+        2
+    );
+}
+
+void BufferSelectedMonIVsPage2(void)
+{
+    struct Pokemon *mon = &gPlayerParty[gSpecialVar_0x8004];
+    u8 perfectIvCount = 0;
+    u8 i;
+
+    for (i = 0; i < NUM_STATS; i++)
+    {
+        if (GetMonData(mon, MON_DATA_HP_IV + i) == MAX_IV_MASK)
+            perfectIvCount++;
+    }
+
+    ConvertIntToDecimalStringN(
+        gStringVar1,
+        GetMonData(mon, MON_DATA_SPEED_IV),
+        STR_CONV_MODE_LEFT_ALIGN,
+        2
+    );
+
+    ConvertIntToDecimalStringN(
+        gStringVar2,
+        GetMonData(mon, MON_DATA_SPATK_IV),
+        STR_CONV_MODE_LEFT_ALIGN,
+        2
+    );
+
+    ConvertIntToDecimalStringN(
+        gStringVar3,
+        GetMonData(mon, MON_DATA_SPDEF_IV),
+        STR_CONV_MODE_LEFT_ALIGN,
+        2
+    );
+
+    ConvertIntToDecimalStringN(
+        gStringVar4,
+        perfectIvCount,
+        STR_CONV_MODE_LEFT_ALIGN,
+        1
+    );
+}
+
+void BufferSelectedMonHappiness(void)
+{
+    struct Pokemon *mon = &gPlayerParty[gSpecialVar_0x8004];
+
+    GetMonNickname(mon, gStringVar1);
+
+    ConvertIntToDecimalStringN(
+        gStringVar2,
+        GetMonData(mon, MON_DATA_FRIENDSHIP),
+        STR_CONV_MODE_LEFT_ALIGN,
+        3
+    );
 }

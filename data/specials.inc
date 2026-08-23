@@ -452,4 +452,9 @@ gSpecials::
 	def_special UpdateLoreleiDollCollection
 	def_special LoopWingFlapSound
 	def_special CreateEnemyEventMon
+	def_special BufferSelectedMonEVsPage1
+	def_special BufferSelectedMonEVsPage2
+	def_special BufferSelectedMonIVsPage1
+	def_special BufferSelectedMonIVsPage2
+	def_special BufferSelectedMonHappiness
 gSpecialsEnd::
