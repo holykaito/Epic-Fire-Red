@@ -1770,6 +1770,7 @@ void CreateBoxMon(struct BoxPokemon *boxMon, u16 species, u8 level, u8 fixedIV, 
     u32 personality;
     u32 value;
     u16 checksum;
+    bool8 isShiny;
 
     ZeroBoxMonData(boxMon);
 
@@ -1803,6 +1804,7 @@ void CreateBoxMon(struct BoxPokemon *boxMon, u16 species, u8 level, u8 fixedIV, 
     }
 
     SetBoxMonData(boxMon, MON_DATA_OT_ID, &value);
+    isShiny = GET_SHINY_VALUE(value, personality) < SHINY_ODDS;
 
     checksum = CalculateBoxMonChecksum(boxMon);
     SetBoxMonData(boxMon, MON_DATA_CHECKSUM, &checksum);
@@ -1851,6 +1853,33 @@ void CreateBoxMon(struct BoxPokemon *boxMon, u16 species, u8 level, u8 fixedIV, 
         SetBoxMonData(boxMon, MON_DATA_SPATK_IV, &iv);
         iv = (value & (MAX_IV_MASK << 10)) >> 10;
         SetBoxMonData(boxMon, MON_DATA_SPDEF_IV, &iv);
+    }
+
+    // Pokémon Shiny được đảm bảo ít nhất 3 IV hoàn hảo
+    if (isShiny)
+    {
+        u8 perfectIvCount = 0;
+        u8 perfectIvMask = 0;
+
+        while (perfectIvCount < 3)
+        {
+            u8 statId = Random() % NUM_STATS;
+
+        // Không chọn trùng chỉ số
+        if (!(perfectIvMask & (1 << statId)))
+            {
+            u32 perfectIv = MAX_IV_MASK; // 31
+
+            SetBoxMonData(
+                boxMon,
+                MON_DATA_HP_IV + statId,
+                &perfectIv
+            );
+
+            perfectIvMask |= 1 << statId;
+            perfectIvCount++;
+            }
+        }
     }
 
     if (gSpeciesInfo[species].abilities[1])
