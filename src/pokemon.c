@@ -36,6 +36,7 @@
 #include "constants/hold_effects.h"
 #include "constants/battle_move_effects.h"
 #include "constants/union_room.h"
+#include "constants/flags.h"
 
 #define SPECIES_TO_HOENN(name)      [SPECIES_##name - 1] = HOENN_DEX_##name
 #define SPECIES_TO_NATIONAL(name)   [SPECIES_##name - 1] = NATIONAL_DEX_##name
@@ -4162,7 +4163,7 @@ bool8 PokemonUseItemEffects(struct Pokemon *mon, u16 item, u8 partyIndex, u8 mov
 
             // Rare Candy
             if ((itemEffect[cmdIndex] & ITEM3_LEVEL_UP)
-             && GetMonData(mon, MON_DATA_LEVEL, NULL) != MAX_LEVEL)
+             && GetMonData(mon, MON_DATA_LEVEL, NULL) < GetPlayerLevelCap()
             {
                 data = gExperienceTables[gSpeciesInfo[GetMonData(mon, MON_DATA_SPECIES, NULL)].growthRate][GetMonData(mon, MON_DATA_LEVEL, NULL) + 1];
                 SetMonData(mon, MON_DATA_EXP, &data);
@@ -4652,7 +4653,7 @@ bool8 PokemonItemUseNoEffect(struct Pokemon *mon, u16 item, u8 partyIndex, u8 mo
 
             // Rare Candy
             if ((itemEffect[cmdIndex] & ITEM3_LEVEL_UP)
-             && GetMonData(mon, MON_DATA_LEVEL, NULL) != MAX_LEVEL)
+             && GetMonData(mon, MON_DATA_LEVEL, NULL) < GetPlayerLevelCap()
                 retVal = FALSE;
 
             // Cure status
@@ -5701,7 +5702,7 @@ bool8 TryIncrementMonLevel(struct Pokemon *mon)
     u8 newLevel = level + 1;
     u32 exp = GetMonData(mon, MON_DATA_EXP, NULL);
 
-    if (level < MAX_LEVEL)
+    if (level < GetPlayerLevelCap())
     {
         if (exp > gExperienceTables[gSpeciesInfo[species].growthRate][newLevel])
         {
@@ -6090,6 +6091,36 @@ u8 GetPlayerPartyHighestLevel(void)
         }
     }
     return level;
+}
+
+u8 GetPlayerLevelCap(void)
+{
+    // Sau khi đánh bại Champion: trở về giới hạn thông thường là Level 100
+    if (FlagGet(FLAG_SYS_GAME_CLEAR))
+        return MAX_LEVEL;
+
+    if (FlagGet(FLAG_BADGE08_GET))
+        return 63;
+
+    if (FlagGet(FLAG_BADGE07_GET))
+        return 50;
+
+    if (FlagGet(FLAG_BADGE06_GET))
+        return 47;
+
+    if (FlagGet(FLAG_BADGE05_GET))
+        return 43;
+
+    if (FlagGet(FLAG_BADGE03_GET))
+        return 29;
+
+    if (FlagGet(FLAG_BADGE02_GET))
+        return 24;
+
+    if (FlagGet(FLAG_BADGE01_GET))
+        return 21;
+
+    return 14;
 }
 
 u16 FacilityClassToPicIndex(u16 facilityClass)
