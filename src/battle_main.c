@@ -3405,6 +3405,8 @@ u8 GetWhoStrikesFirst(u8 battler1, u8 battler2, bool8 ignoreChosenMoves)
     u8 holdEffect = 0;
     u8 holdEffectParam = 0;
     u16 moveBattler1 = 0, moveBattler2 = 0;
+    s8 priorityBattler1 = 0;
+    s8 priorityBattler2 = 0;
 
     if (WEATHER_HAS_EFFECT)
     {
@@ -3500,6 +3502,31 @@ u8 GetWhoStrikesFirst(u8 battler1, u8 battler2, bool8 ignoreChosenMoves)
         }
         else
             moveBattler2 = MOVE_NONE;
+    }
+        priorityBattler1 = gBattleMoves[moveBattler1].priority;
+    priorityBattler2 = gBattleMoves[moveBattler2].priority;
+
+    // Truant: status moves can be used while loafing,
+    // but their priority is reduced by 5.
+    if (!ignoreChosenMoves)
+    {
+        if (gChosenActionByBattler[battler1] == B_ACTION_USE_MOVE
+         && moveBattler1 != MOVE_NONE
+         && gBattleMons[battler1].ability == ABILITY_TRUANT
+         && gDisableStructs[battler1].truantCounter
+         && gBattleMoves[moveBattler1].power == 0)
+        {
+            priorityBattler1 -= 5;
+        }
+
+        if (gChosenActionByBattler[battler2] == B_ACTION_USE_MOVE
+         && moveBattler2 != MOVE_NONE
+         && gBattleMons[battler2].ability == ABILITY_TRUANT
+         && gDisableStructs[battler2].truantCounter
+         && gBattleMoves[moveBattler2].power == 0)
+        {
+            priorityBattler2 -= 5;
+        }
     }
     // both move priorities are different than 0
     if (gBattleMoves[moveBattler1].priority != 0 || gBattleMoves[moveBattler2].priority != 0)

@@ -4139,6 +4139,33 @@ static void Cmd_moveend(void)
                 effect = TRUE;
             gBattleScripting.moveendState++;
             break;
+        case MOVEEND_PLUS_MINUS_STATUS:
+            if (!(gMoveResultFlags & MOVE_RESULT_NO_EFFECT)
+             && gBattleMons[gBattlerTarget].hp != 0
+             && gBattlerAttacker != gBattlerTarget
+             && GetBattlerSide(gBattlerAttacker) != GetBattlerSide(gBattlerTarget)
+             && TARGET_TURN_DAMAGED
+             && gBattleMoves[gCurrentMove].power != 0
+             && moveType == TYPE_ELECTRIC
+             && (Random() % 5) == 0)
+            {
+                if (gBattleMons[gBattlerAttacker].ability == ABILITY_PLUS)
+                {
+                    gBattleCommunication[MOVE_EFFECT_BYTE] = MOVE_EFFECT_BURN;
+                    BattleScriptPushCursor();
+                    gBattlescriptCurrInstr = BattleScript_ApplySecondaryEffect;
+                    effect = TRUE;
+                }
+                else if (gBattleMons[gBattlerAttacker].ability == ABILITY_MINUS)
+                {
+                    gBattleCommunication[MOVE_EFFECT_BYTE] = MOVE_EFFECT_FREEZE;
+                    BattleScriptPushCursor();
+                    gBattlescriptCurrInstr = BattleScript_ApplySecondaryEffect;
+                    effect = TRUE;
+                }
+            }
+            gBattleScripting.moveendState++;
+            break;
         case MOVEEND_IMMUNITY_ABILITIES: // status immunities
             if (AbilityBattleEffects(ABILITYEFFECT_IMMUNITY, 0, 0, 0, 0))
                 effect = TRUE; // it loops through all battlers, so we increment after its done with all battlers
