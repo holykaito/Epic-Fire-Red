@@ -4172,6 +4172,33 @@ static void Cmd_moveend(void)
             else
                 gBattleScripting.moveendState++;
             break;
+        case MOVEEND_WATER_VEIL_HEAL:
+            if (gBattleMons[gBattlerAttacker].ability == ABILITY_WATER_VEIL
+                && moveType == TYPE_WATER
+                && gBattleMons[gBattlerAttacker].hp != 0
+                && gBattleMons[gBattlerAttacker].hp < gBattleMons[gBattlerAttacker].maxHP
+                && !(gMoveResultFlags & MOVE_RESULT_NO_EFFECT)
+                && !gSpecialStatuses[gBattlerAttacker].waterVeilHealed)
+            {
+                gBattleMoveDamage = gBattleMons[gBattlerAttacker].maxHP / 16;
+
+                // Pokémon có ít hơn 16 max HP vẫn hồi tối thiểu 1 HP.
+                if (gBattleMoveDamage == 0)
+                    gBattleMoveDamage = 1;
+
+                gBattleMoveDamage *= -1;
+                gSpecialStatuses[gBattlerAttacker].waterVeilHealed = TRUE;
+
+                gLastUsedAbility = ABILITY_WATER_VEIL;
+                RecordAbilityBattle(gBattlerAttacker, ABILITY_WATER_VEIL);
+
+                BattleScriptPushCursor();
+                gBattlescriptCurrInstr = BattleScript_WaterVeilHeals;
+                effect = TRUE;
+            }
+
+            gBattleScripting.moveendState++;
+            break;
         case MOVEEND_SYNCHRONIZE_ATTACKER: // attacker synchronize
             if (AbilityBattleEffects(ABILITYEFFECT_ATK_SYNCHRONIZE, gBattlerAttacker, 0, 0, 0))
                 effect = TRUE;

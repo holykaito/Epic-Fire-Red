@@ -231,6 +231,8 @@ extern const u8 BattleScript_SilphScopeUnveiled[];
 extern const u8 BattleScript_BattleTowerTrainerBattleWon[];
 extern const u8 BattleScript_MoveUsedWokeUpEarlyBird[];
 extern const u8 BattleScript_MonWokeUpInUproarEarlyBird[];
+extern const u8 BattleScript_MagnetPullLowersSpDef[];
+extern const u8 BattleScript_WaterVeilHeals[];
 
 extern const u8 *const gBattleScriptsForMoveEffects[];
 extern const u8 *const gBattlescriptsForBallThrow[];

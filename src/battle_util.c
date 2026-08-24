@@ -721,6 +721,8 @@ enum
 {
     ENDTURN_INGRAIN,
     ENDTURN_ABILITIES,
+    ENDTURN_MAGNET_PULL_TARGET1,
+    ENDTURN_MAGNET_PULL_TARGET2,
     ENDTURN_ITEMS1,
     ENDTURN_LEECH_SEED,
     ENDTURN_POISON,
@@ -776,6 +778,66 @@ u8 DoBattlerEndTurnEffects(void)
                     effect++;
                 gBattleStruct->turnEffectsTracker++;
                 break;
+            case ENDTURN_MAGNET_PULL_TARGET1:
+            {
+                u8 targetPosition;
+                u8 target;
+
+                // Pokémon directly opposite the Magnet Pull user.
+                targetPosition = GetBattlerPosition(gActiveBattler) ^ BIT_SIDE;
+                target = GetBattlerAtPosition(targetPosition);
+
+                if (gBattleMons[gActiveBattler].ability == ABILITY_MAGNET_PULL
+                && gBattleMons[gActiveBattler].hp != 0
+                && target < gBattlersCount
+                && !(gAbsentBattlerFlags & gBitTable[target])
+                && gBattleMons[target].hp != 0
+                && GetBattlerSide(target) != GetBattlerSide(gActiveBattler)
+                && IS_BATTLER_OF_TYPE(target, TYPE_STEEL)
+                && gBattleMons[target].statStages[STAT_SPDEF] > MIN_STAT_STAGE)
+                {
+                    gBattlerAttacker = gActiveBattler;
+                    gBattlerTarget = target;
+                    gLastUsedAbility = ABILITY_MAGNET_PULL;
+                    RecordAbilityBattle(gActiveBattler, ABILITY_MAGNET_PULL);
+                    BattleScriptExecute(BattleScript_MagnetPullLowersSpDef);
+                    effect++;
+                }
+
+                gBattleStruct->turnEffectsTracker++;
+                break;
+            }
+
+            case ENDTURN_MAGNET_PULL_TARGET2:
+            {
+                u8 targetPosition;
+                u8 target;
+
+                // The second opposing position in a double battle.
+                targetPosition =
+                    BATTLE_PARTNER(GetBattlerPosition(gActiveBattler) ^ BIT_SIDE);
+                target = GetBattlerAtPosition(targetPosition);
+
+                if (gBattleMons[gActiveBattler].ability == ABILITY_MAGNET_PULL
+                && gBattleMons[gActiveBattler].hp != 0
+                && target < gBattlersCount
+                && !(gAbsentBattlerFlags & gBitTable[target])
+                && gBattleMons[target].hp != 0
+                && GetBattlerSide(target) != GetBattlerSide(gActiveBattler)
+                && IS_BATTLER_OF_TYPE(target, TYPE_STEEL)
+                && gBattleMons[target].statStages[STAT_SPDEF] > MIN_STAT_STAGE)
+                {
+                    gBattlerAttacker = gActiveBattler;
+                    gBattlerTarget = target;
+                    gLastUsedAbility = ABILITY_MAGNET_PULL;
+                    RecordAbilityBattle(gActiveBattler, ABILITY_MAGNET_PULL);
+                    BattleScriptExecute(BattleScript_MagnetPullLowersSpDef);
+                    effect++;
+                }
+
+                gBattleStruct->turnEffectsTracker++;
+                break;
+            }
             case ENDTURN_ITEMS1:  // item effects
                 if (ItemBattleEffects(ITEMEFFECT_NORMAL, gActiveBattler, FALSE))
                     effect++;
