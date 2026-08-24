@@ -365,6 +365,7 @@ u8 BattleAI_ChooseMoveOrAction(void)
     u8 currentMoveArray[MAX_MON_MOVES];
     u8 consideredMoveArray[MAX_MON_MOVES];
     u8 numOfBestMoves;
+    bool8 hasUsableStatusMove = FALSE;
     s32 i;
 
     RecordLastUsedMoveByTarget();
@@ -385,6 +386,40 @@ u8 BattleAI_ChooseMoveOrAction(void)
         return AI_CHOICE_FLEE;
     if (AI_THINKING_STRUCT->aiAction & AI_ACTION_WATCH)
         return AI_CHOICE_WATCH;
+
+    // During Truant's loafing turn, prefer usable status moves.
+    if (gBattleMons[gBattlerAttacker].ability == ABILITY_TRUANT
+     && gDisableStructs[gBattlerAttacker].truantCounter)
+    {
+        // First check whether the Pokemon has a usable status move.
+        for (i = 0; i < MAX_MON_MOVES; i++)
+        {
+            u16 move = gBattleMons[gBattlerAttacker].moves[i];
+
+            if (move != MOVE_NONE
+             && gBattleMoves[move].power == 0
+             && AI_THINKING_STRUCT->score[i] != 0)
+            {
+                hasUsableStatusMove = TRUE;
+                break;
+            }
+        }
+
+        // If one exists, prevent the AI from choosing damaging moves.
+        if (hasUsableStatusMove)
+        {
+            for (i = 0; i < MAX_MON_MOVES; i++)
+            {
+                u16 move = gBattleMons[gBattlerAttacker].moves[i];
+
+                if (move != MOVE_NONE
+                 && gBattleMoves[move].power != 0)
+                {
+                    AI_THINKING_STRUCT->score[i] = 0;
+                }
+            }
+        }
+    }
 
     numOfBestMoves = 1;
     currentMoveArray[0] = AI_THINKING_STRUCT->score[0];
@@ -1139,10 +1174,41 @@ static void Cmd_get_ability(void)
 {
     u8 battlerId;
 
-    if (sAIScriptPtr[1] == AI_USER)
+    switch (sAIScriptPtr[1])
+    {
+    case AI_USER:
         battlerId = gBattlerAttacker;
-    else
+        break;
+    case AI_TARGET:
         battlerId = gBattlerTarget;
+        break;
+    case AI_USER_PARTNER:
+        battlerId = gBattlerAttacker ^ BIT_FLANK;
+        break;
+    case AI_TARGET_PARTNER:
+        battlerId = gBattlerTarget ^ BIT_FLANK;
+        break;
+    default:
+        battlerId = gBattlerTarget;
+        break;
+    }
+
+    // The selected battler's partner may have already fainted.
+    if (gAbsentBattlerFlags & gBitTable[battlerId])
+    {
+        AI_THINKING_STRUCT->funcResult = ABILITY_NONE;
+        sAIScriptPtr += 2;
+        return;
+    }
+
+    // BattleHistory only stores one known ability per side.
+    // In Double Battles, read each active battler's real ability separately.
+    if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE)
+    {
+        AI_THINKING_STRUCT->funcResult = gBattleMons[battlerId].ability;
+        sAIScriptPtr += 2;
+        return;
+    }
 
     if (GetBattlerSide(battlerId) == AI_TARGET)
     {

@@ -4529,3 +4529,8 @@ BattleScript_WaterVeilHeals::
 	healthbarupdate BS_ATTACKER
 	datahpupdate BS_ATTACKER
 	return
+
+BattleScript_StenchPoisons::
+	setmoveeffect MOVE_EFFECT_POISON
+	seteffectsecondary
+	return

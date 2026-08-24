@@ -223,7 +223,8 @@ struct SpecialStatus
     u8 faintedHasReplacement:1;
     u8 focusBanded:1;
     u8 waterVeilHealed;
-    u8 field1[2];
+    u8 stenchChecked;
+    u8 field1;
     s32 dmg;
     s32 physicalDmg;
     s32 specialDmg;

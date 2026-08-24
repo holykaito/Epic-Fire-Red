@@ -83,6 +83,7 @@ static bool8 FindMonThatAbsorbsOpponentsMove(void)
 {
     u8 battlerIn1, battlerIn2;
     u8 absorbingTypeAbility;
+    bool8 isElectricMove = FALSE;
     s32 i;
 
     if ((HasSuperEffectiveMoveAgainstOpponents(TRUE) && Random() % 3) 
@@ -105,15 +106,28 @@ static bool8 FindMonThatAbsorbsOpponentsMove(void)
         battlerIn2 = gActiveBattler;
     }
     if (gBattleMoves[gLastLandedMoves[gActiveBattler]].type == TYPE_FIRE)
+    {
         absorbingTypeAbility = ABILITY_FLASH_FIRE;
+    }
     else if (gBattleMoves[gLastLandedMoves[gActiveBattler]].type == TYPE_WATER)
+    {
         absorbingTypeAbility = ABILITY_WATER_ABSORB;
+    }
     else if (gBattleMoves[gLastLandedMoves[gActiveBattler]].type == TYPE_ELECTRIC)
+    {
         absorbingTypeAbility = ABILITY_VOLT_ABSORB;
+        isElectricMove = TRUE;
+    }
     else
+    {
         return FALSE;
-    if (gBattleMons[gActiveBattler].ability == absorbingTypeAbility)
+    }
+    if (gBattleMons[gActiveBattler].ability == absorbingTypeAbility
+     || (isElectricMove
+      && gBattleMons[gActiveBattler].ability == ABILITY_LIGHTNING_ROD))
+    {
         return FALSE;
+    }
     for (i = 0; i < PARTY_SIZE; ++i)
     {
         u16 species;
@@ -132,10 +146,14 @@ static bool8 FindMonThatAbsorbsOpponentsMove(void)
             monAbility = gSpeciesInfo[species].abilities[1];
         else
             monAbility = gSpeciesInfo[species].abilities[0];
-        if (absorbingTypeAbility == monAbility && Random() & 1)
+        if ((absorbingTypeAbility == monAbility
+          || (isElectricMove && monAbility == ABILITY_LIGHTNING_ROD))
+         && Random() & 1)
         {
-            // we found a mon
-            *(gBattleStruct->AI_monToSwitchIntoId + (GetBattlerPosition(gActiveBattler) >> 1)) = i;
+            // We found a Pokemon that can absorb the incoming move.
+            *(gBattleStruct->AI_monToSwitchIntoId
+              + (GetBattlerPosition(gActiveBattler) >> 1)) = i;
+
             BtlController_EmitTwoReturnValues(1, B_ACTION_SWITCH, 0);
             return TRUE;
         }

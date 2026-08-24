@@ -4217,6 +4217,7 @@ static void Cmd_moveend(void)
                 gBattleScripting.moveendState++;
             break;
         case MOVEEND_WATER_VEIL_HEAL:
+            // Water Veil: dùng Water-type move sẽ hồi 1/16 max HP.
             if (gBattleMons[gBattlerAttacker].ability == ABILITY_WATER_VEIL
                 && moveType == TYPE_WATER
                 && gBattleMons[gBattlerAttacker].hp != 0
@@ -4226,7 +4227,6 @@ static void Cmd_moveend(void)
             {
                 gBattleMoveDamage = gBattleMons[gBattlerAttacker].maxHP / 16;
 
-                // Pokémon có ít hơn 16 max HP vẫn hồi tối thiểu 1 HP.
                 if (gBattleMoveDamage == 0)
                     gBattleMoveDamage = 1;
 
@@ -4239,6 +4239,27 @@ static void Cmd_moveend(void)
                 BattleScriptPushCursor();
                 gBattlescriptCurrInstr = BattleScript_WaterVeilHeals;
                 effect = TRUE;
+            }
+            // Stench: damaging move có 10% gây poison.
+            else if (gBattleMons[gBattlerAttacker].ability == ABILITY_STENCH
+                    && gBattleMoves[gCurrentMove].power != 0
+                    && gBattleMons[gBattlerTarget].hp != 0
+                    && !(gMoveResultFlags & MOVE_RESULT_NO_EFFECT)
+                    && TARGET_TURN_DAMAGED
+                    && !gSpecialStatuses[gBattlerTarget].stenchChecked)
+            {
+                // Đánh dấu trước khi tung RNG để chỉ kiểm tra một lần mỗi mục tiêu.
+                gSpecialStatuses[gBattlerTarget].stenchChecked = TRUE;
+
+                if ((Random() % 100) < 10)
+                {
+                    gLastUsedAbility = ABILITY_STENCH;
+                    RecordAbilityBattle(gBattlerAttacker, ABILITY_STENCH);
+
+                    BattleScriptPushCursor();
+                    gBattlescriptCurrInstr = BattleScript_StenchPoisons;
+                    effect = TRUE;
+                }
             }
 
             gBattleScripting.moveendState++;
