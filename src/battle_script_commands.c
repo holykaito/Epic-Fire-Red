@@ -1048,15 +1048,18 @@ static void Cmd_accuracycheck(void)
         if (AccuracyCalcHelper(move))
             return;
 
-        if (gBattleMons[gBattlerTarget].status2 & STATUS2_FORESIGHT)
+        if ((gBattleMons[gBattlerTarget].status2 & STATUS2_FORESIGHT)
+            || gBattleMons[gBattlerAttacker].ability == ABILITY_KEEN_EYE)
         {
+            // Foresight và Keen Eye bỏ qua Evasion của mục tiêu.
             u8 acc = gBattleMons[gBattlerAttacker].statStages[STAT_ACC];
             buff = acc;
         }
         else
         {
             u8 acc = gBattleMons[gBattlerAttacker].statStages[STAT_ACC];
-            buff = acc + DEFAULT_STAT_STAGE - gBattleMons[gBattlerTarget].statStages[STAT_EVASION];
+            buff = acc + DEFAULT_STAT_STAGE
+                - gBattleMons[gBattlerTarget].statStages[STAT_EVASION];
         }
 
         if (buff < MIN_STAT_STAGE)
@@ -1074,6 +1077,8 @@ static void Cmd_accuracycheck(void)
 
         if (gBattleMons[gBattlerAttacker].ability == ABILITY_COMPOUND_EYES)
             calc = (calc * 130) / 100; // 1.3 compound eyes boost
+        if (gBattleMons[gBattlerAttacker].ability == ABILITY_KEEN_EYE)
+            calc = (calc * 110) / 100;
         if (WEATHER_HAS_EFFECT && gBattleMons[gBattlerTarget].ability == ABILITY_SAND_VEIL && gBattleWeather & B_WEATHER_SANDSTORM)
             calc = (calc * 80) / 100; // 1.2 sand veil loss
         if (gBattleMons[gBattlerAttacker].ability == ABILITY_HUSTLE && IS_TYPE_PHYSICAL(type))
