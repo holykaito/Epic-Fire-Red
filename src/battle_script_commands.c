@@ -1585,9 +1585,20 @@ static void Unused_ApplyRandomDmgMultiplier(void)
     ApplyRandomDmgMultiplier();
 }
 
+static bool8 ShouldSturdyActivate(void)
+{
+    return gBattleMons[gBattlerTarget].ability == ABILITY_STURDY
+        && gBattleMons[gBattlerTarget].hp == gBattleMons[gBattlerTarget].maxHP
+        && gBattleMons[gBattlerTarget].hp <= gBattleMoveDamage
+        && gBattlerAttacker != gBattlerTarget
+        && !(gBattleMons[gBattlerTarget].status2 & STATUS2_SUBSTITUTE)
+        && gBattleMoves[gCurrentMove].effect != EFFECT_FALSE_SWIPE;
+}
+
 static void Cmd_adjustnormaldamage(void)
 {
     u8 holdEffect, param;
+    bool8 sturdyActivated;
 
     ApplyRandomDmgMultiplier();
 
@@ -1631,6 +1642,7 @@ static void Cmd_adjustnormaldamage(void)
 static void Cmd_adjustnormaldamage2(void)
 {
     u8 holdEffect, param;
+    bool8 sturdyActivated;
 
     ApplyRandomDmgMultiplier();
 
@@ -1647,19 +1659,36 @@ static void Cmd_adjustnormaldamage2(void)
 
     gPotentialItemEffectBattler = gBattlerTarget;
 
-    if (holdEffect == HOLD_EFFECT_FOCUS_BAND && (Random() % 100) < param)
+    // Kiểm tra Sturdy sau khi đã áp dụng random damage.
+    sturdyActivated = ShouldSturdyActivate();
+
+    // Không kiểm tra Focus Band nếu Sturdy chắc chắn kích hoạt.
+    if (!sturdyActivated
+        && holdEffect == HOLD_EFFECT_FOCUS_BAND
+        && (Random() % 100) < param)
     {
         RecordItemEffectBattle(gBattlerTarget, holdEffect);
         gSpecialStatuses[gBattlerTarget].focusBanded = 1;
     }
+
     if (!(gBattleMons[gBattlerTarget].status2 & STATUS2_SUBSTITUTE)
-     && (gProtectStructs[gBattlerTarget].endured || gSpecialStatuses[gBattlerTarget].focusBanded)
-     && gBattleMons[gBattlerTarget].hp <= gBattleMoveDamage)
+        && (gProtectStructs[gBattlerTarget].endured
+            || sturdyActivated
+            || gSpecialStatuses[gBattlerTarget].focusBanded)
+        && gBattleMons[gBattlerTarget].hp <= gBattleMoveDamage)
     {
+        // Giới hạn sát thương để mục tiêu còn đúng 1 HP.
         gBattleMoveDamage = gBattleMons[gBattlerTarget].hp - 1;
+
         if (gProtectStructs[gBattlerTarget].endured)
         {
             gMoveResultFlags |= MOVE_RESULT_FOE_ENDURED;
+        }
+        else if (sturdyActivated)
+        {
+            gMoveResultFlags |= MOVE_RESULT_FOE_ENDURED;
+            gLastUsedAbility = ABILITY_STURDY;
+            RecordAbilityBattle(gBattlerTarget, ABILITY_STURDY);
         }
         else if (gSpecialStatuses[gBattlerTarget].focusBanded)
         {
@@ -1667,6 +1696,7 @@ static void Cmd_adjustnormaldamage2(void)
             gLastUsedItem = gBattleMons[gBattlerTarget].item;
         }
     }
+
     gBattlescriptCurrInstr++;
 }
 
@@ -5681,6 +5711,7 @@ static void Cmd_cancelallactions(void)
 static void Cmd_adjustsetdamage(void)
 {
     u8 holdEffect, param;
+    bool8 sturdyActivated;
 
     if (gBattleMons[gBattlerTarget].item == ITEM_ENIGMA_BERRY)
     {
@@ -5695,19 +5726,34 @@ static void Cmd_adjustsetdamage(void)
 
     gPotentialItemEffectBattler = gBattlerTarget;
 
-    if (holdEffect == HOLD_EFFECT_FOCUS_BAND && (Random() % 100) < param)
+    sturdyActivated = ShouldSturdyActivate();
+
+    if (!sturdyActivated
+        && holdEffect == HOLD_EFFECT_FOCUS_BAND
+        && (Random() % 100) < param)
     {
         RecordItemEffectBattle(gBattlerTarget, holdEffect);
         gSpecialStatuses[gBattlerTarget].focusBanded = 1;
     }
+
     if (!(gBattleMons[gBattlerTarget].status2 & STATUS2_SUBSTITUTE)
-     && (gBattleMoves[gCurrentMove].effect == EFFECT_FALSE_SWIPE || gProtectStructs[gBattlerTarget].endured || gSpecialStatuses[gBattlerTarget].focusBanded)
-     && gBattleMons[gBattlerTarget].hp <= gBattleMoveDamage)
+        && (gBattleMoves[gCurrentMove].effect == EFFECT_FALSE_SWIPE
+            || gProtectStructs[gBattlerTarget].endured
+            || sturdyActivated
+            || gSpecialStatuses[gBattlerTarget].focusBanded)
+        && gBattleMons[gBattlerTarget].hp <= gBattleMoveDamage)
     {
         gBattleMoveDamage = gBattleMons[gBattlerTarget].hp - 1;
+
         if (gProtectStructs[gBattlerTarget].endured)
         {
             gMoveResultFlags |= MOVE_RESULT_FOE_ENDURED;
+        }
+        else if (sturdyActivated)
+        {
+            gMoveResultFlags |= MOVE_RESULT_FOE_ENDURED;
+            gLastUsedAbility = ABILITY_STURDY;
+            RecordAbilityBattle(gBattlerTarget, ABILITY_STURDY);
         }
         else if (gSpecialStatuses[gBattlerTarget].focusBanded)
         {
@@ -5715,6 +5761,7 @@ static void Cmd_adjustsetdamage(void)
             gLastUsedItem = gBattleMons[gBattlerTarget].item;
         }
     }
+
     gBattlescriptCurrInstr++;
 }
 
