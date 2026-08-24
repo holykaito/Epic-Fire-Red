@@ -1725,6 +1725,15 @@ static void Cmd_healthbarupdate(void)
     {
         gActiveBattler = GetBattlerForBattleScript(gBattlescriptCurrInstr[1]);
 
+                // Suction Cups increases all HP recovery by 50%.
+        if (gBattleMoveDamage < 0
+            && gBattleMons[gActiveBattler].ability == ABILITY_SUCTION_CUPS)
+        {
+            gBattleMoveDamage =
+                -(((-gBattleMoveDamage) * 130) / 100);
+        }
+
+
         if (gBattleMons[gActiveBattler].status2 & STATUS2_SUBSTITUTE && gDisableStructs[gActiveBattler].substituteHP && !(gHitMarker & HITMARKER_IGNORE_SUBSTITUTE))
         {
             PrepareStringBattle(STRINGID_SUBSTITUTEDAMAGED, gActiveBattler);
