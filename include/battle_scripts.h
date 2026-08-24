@@ -233,6 +233,8 @@ extern const u8 BattleScript_MoveUsedWokeUpEarlyBird[];
 extern const u8 BattleScript_MonWokeUpInUproarEarlyBird[];
 extern const u8 BattleScript_MagnetPullLowersSpDef[];
 extern const u8 BattleScript_WaterVeilHeals[];
+extern const u8 BattleScript_IlluminateActivates[];
+extern const u8 BattleScript_IlluminateActivatesEnd3[];
 
 extern const u8 *const gBattleScriptsForMoveEffects[];
 extern const u8 *const gBattlescriptsForBallThrow[];

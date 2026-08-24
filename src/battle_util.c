@@ -1878,6 +1878,7 @@ u8 AbilityBattleEffects(u8 caseID, u8 battler, u8 ability, u8 special, u16 moveA
                 }
                 break;
             case ABILITY_INTIMIDATE:
+            case ABILITY_ILLUMINATE:
                 if (!(gSpecialStatuses[battler].intimidatedMon))
                 {
                     gStatuses3[battler] |= STATUS3_INTIMIDATE_POKES;
@@ -2334,14 +2335,21 @@ u8 AbilityBattleEffects(u8 caseID, u8 battler, u8 ability, u8 special, u16 moveA
                 effect++;
             }
             break;
-        case ABILITYEFFECT_INTIMIDATE1: // 9
+        case ABILITYEFFECT_INTIMIDATE1:
             for (i = 0; i < gBattlersCount; i++)
             {
-                if (gBattleMons[i].ability == ABILITY_INTIMIDATE && gStatuses3[i] & STATUS3_INTIMIDATE_POKES)
+                if ((gBattleMons[i].ability == ABILITY_INTIMIDATE
+                || gBattleMons[i].ability == ABILITY_ILLUMINATE)
+                && (gStatuses3[i] & STATUS3_INTIMIDATE_POKES))
                 {
-                    gLastUsedAbility = ABILITY_INTIMIDATE;
+                    gLastUsedAbility = gBattleMons[i].ability;
                     gStatuses3[i] &= ~STATUS3_INTIMIDATE_POKES;
-                    BattleScriptPushCursorAndCallback(BattleScript_IntimidateActivatesEnd3);
+
+                    if (gLastUsedAbility == ABILITY_ILLUMINATE)
+                        BattleScriptPushCursorAndCallback(BattleScript_IlluminateActivatesEnd3);
+                    else
+                        BattleScriptPushCursorAndCallback(BattleScript_IntimidateActivatesEnd3);
+
                     gBattleStruct->intimidateBattler = i;
                     effect++;
                     break;
@@ -2405,15 +2413,23 @@ u8 AbilityBattleEffects(u8 caseID, u8 battler, u8 ability, u8 special, u16 moveA
                 }
             }
             break;
-        case ABILITYEFFECT_INTIMIDATE2: // 10
+        case ABILITYEFFECT_INTIMIDATE2:
             for (i = 0; i < gBattlersCount; i++)
             {
-                if (gBattleMons[i].ability == ABILITY_INTIMIDATE && (gStatuses3[i] & STATUS3_INTIMIDATE_POKES))
+                if ((gBattleMons[i].ability == ABILITY_INTIMIDATE
+                || gBattleMons[i].ability == ABILITY_ILLUMINATE)
+                && (gStatuses3[i] & STATUS3_INTIMIDATE_POKES))
                 {
-                    gLastUsedAbility = ABILITY_INTIMIDATE;
+                    gLastUsedAbility = gBattleMons[i].ability;
                     gStatuses3[i] &= ~STATUS3_INTIMIDATE_POKES;
+
                     BattleScriptPushCursor();
-                    gBattlescriptCurrInstr = BattleScript_IntimidateActivates;
+
+                    if (gLastUsedAbility == ABILITY_ILLUMINATE)
+                        gBattlescriptCurrInstr = BattleScript_IlluminateActivates;
+                    else
+                        gBattlescriptCurrInstr = BattleScript_IntimidateActivates;
+
                     gBattleStruct->intimidateBattler = i;
                     effect++;
                     break;
