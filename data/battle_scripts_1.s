@@ -1590,6 +1590,8 @@ BattleScript_PerishSongLoopIncrement::
 BattleScript_PerishSongNotAffected::
 	printstring STRINGID_PKMNSXBLOCKSY2
 	waitmessage B_WAIT_TIME_LONG
+	copybyte gBattlerTarget, sBATTLER
+	call BattleScript_SoundproofRaiseSpAtk
 	goto BattleScript_PerishSongLoopIncrement
 
 BattleScript_EffectSandstorm::
@@ -3685,11 +3687,38 @@ BattleScript_MoveUsedWokeUp::
 	updatestatusicon BS_ATTACKER
 	return
 
+BattleScript_MoveUsedWokeUpEarlyBird::
+	bicword gHitMarker, HITMARKER_WAKE_UP_CLEAR
+	printfromtable gWokeUpStringIds
+	waitmessage B_WAIT_TIME_LONG
+	updatestatusicon BS_ATTACKER
+	waitstate
+	call BattleScript_EarlyBirdRandomStatBoost
+	return
+
 BattleScript_MonWokeUpInUproar::
 	printstring STRINGID_PKMNWOKEUPINUPROAR
 	waitmessage B_WAIT_TIME_LONG
 	updatestatusicon BS_ATTACKER
 	end2
+
+BattleScript_MonWokeUpInUproarEarlyBird::
+	printstring STRINGID_PKMNWOKEUPINUPROAR
+	waitmessage B_WAIT_TIME_LONG
+	updatestatusicon BS_ATTACKER
+	waitstate
+	call BattleScript_EarlyBirdRandomStatBoost
+	end2
+
+BattleScript_EarlyBirdRandomStatBoost::
+	statbuffchange MOVE_EFFECT_AFFECTS_USER | STAT_CHANGE_ALLOW_PTR, BattleScript_EarlyBirdRandomStatBoostEnd
+	setgraphicalstatchangevalues
+	playanimation BS_ATTACKER, B_ANIM_STATS_CHANGE, sB_ANIM_ARG1
+	printfromtable gStatUpStringIds
+	waitmessage B_WAIT_TIME_LONG
+
+BattleScript_EarlyBirdRandomStatBoostEnd::
+	return
 
 BattleScript_PoisonTurnDmg::
 	printstring STRINGID_PKMNHURTBYPOISON
@@ -4142,7 +4171,20 @@ BattleScript_SoundproofProtected::
 	pause B_WAIT_TIME_SHORT
 	printstring STRINGID_PKMNSXBLOCKSY
 	waitmessage B_WAIT_TIME_LONG
+	call BattleScript_SoundproofRaiseSpAtk
 	goto BattleScript_MoveEnd
+
+BattleScript_SoundproofRaiseSpAtk::
+	setstatchanger STAT_SPATK, 1, FALSE
+	statbuffchange STAT_CHANGE_ALLOW_PTR, BattleScript_SoundproofRaiseSpAtkEnd
+	jumpifbyte CMP_EQUAL, cMULTISTRING_CHOOSER, B_MSG_STAT_WONT_INCREASE, BattleScript_SoundproofRaiseSpAtkEnd
+	setgraphicalstatchangevalues
+	playanimation BS_TARGET, B_ANIM_STATS_CHANGE, sB_ANIM_ARG1
+	printfromtable gStatUpStringIds
+	waitmessage B_WAIT_TIME_LONG
+
+BattleScript_SoundproofRaiseSpAtkEnd::
+	return
 
 BattleScript_AbilityNoSpecificStatLoss::
 	pause B_WAIT_TIME_SHORT

@@ -3194,31 +3194,87 @@ static void HandleTurnActionSelectionState(void)
                     }
                     break;
                 case B_ACTION_SWITCH:
-                    *(gBattleStruct->battlerPartyIndexes + gActiveBattler) = gBattlerPartyIndexes[gActiveBattler];
-                    if (gBattleMons[gActiveBattler].status2 & (STATUS2_WRAPPED | STATUS2_ESCAPE_PREVENTION) || gStatuses3[gActiveBattler] & STATUS3_ROOTED)
+                {
+                    bool8 runAwayBypassesTrapping;
+
+                    *(gBattleStruct->battlerPartyIndexes + gActiveBattler) =
+                        gBattlerPartyIndexes[gActiveBattler];
+
+                    // Run Away only bypasses trapping in regular wild battles.
+                    runAwayBypassesTrapping =
+                        gBattleMons[gActiveBattler].ability == ABILITY_RUN_AWAY
+                        && !(gBattleTypeFlags & (BATTLE_TYPE_TRAINER | BATTLE_TYPE_LINK));
+
+                    if (!runAwayBypassesTrapping
+                    && ((gBattleMons[gActiveBattler].status2
+                        & (STATUS2_WRAPPED | STATUS2_ESCAPE_PREVENTION))
+                        || (gStatuses3[gActiveBattler] & STATUS3_ROOTED)))
                     {
-                        BtlController_EmitChoosePokemon(BUFFER_A, PARTY_ACTION_CANT_SWITCH, 6, ABILITY_NONE, gBattleStruct->battlerPartyOrders[gActiveBattler]);
+                        BtlController_EmitChoosePokemon(
+                            BUFFER_A,
+                            PARTY_ACTION_CANT_SWITCH,
+                            6,
+                            ABILITY_NONE,
+                            gBattleStruct->battlerPartyOrders[gActiveBattler]);
                     }
-                    else if ((i = ABILITY_ON_OPPOSING_FIELD(gActiveBattler, ABILITY_SHADOW_TAG))
-                          || ((i = ABILITY_ON_OPPOSING_FIELD(gActiveBattler, ABILITY_ARENA_TRAP))
-                              && !IS_BATTLER_OF_TYPE(gActiveBattler, TYPE_FLYING)
-                              && gBattleMons[gActiveBattler].ability != ABILITY_LEVITATE)
-                          || ((i = AbilityBattleEffects(ABILITYEFFECT_CHECK_FIELD_EXCEPT_BATTLER, gActiveBattler, ABILITY_MAGNET_PULL, 0, 0))
-                              && IS_BATTLER_OF_TYPE(gActiveBattler, TYPE_STEEL)))
+                    else if (!runAwayBypassesTrapping
+                        && ((i = ABILITY_ON_OPPOSING_FIELD(
+                                    gActiveBattler, ABILITY_SHADOW_TAG))
+                        || ((i = ABILITY_ON_OPPOSING_FIELD(
+                                    gActiveBattler, ABILITY_ARENA_TRAP))
+                            && !IS_BATTLER_OF_TYPE(gActiveBattler, TYPE_FLYING)
+                            && gBattleMons[gActiveBattler].ability != ABILITY_LEVITATE)
+                        || ((i = AbilityBattleEffects(
+                                    ABILITYEFFECT_CHECK_FIELD_EXCEPT_BATTLER,
+                                    gActiveBattler,
+                                    ABILITY_MAGNET_PULL,
+                                    0,
+                                    0))
+                            && IS_BATTLER_OF_TYPE(gActiveBattler, TYPE_STEEL))))
                     {
-                        BtlController_EmitChoosePokemon(BUFFER_A, ((i - 1) << 4) | PARTY_ACTION_ABILITY_PREVENTS, 6, gLastUsedAbility, gBattleStruct->battlerPartyOrders[gActiveBattler]);
+                        BtlController_EmitChoosePokemon(
+                            BUFFER_A,
+                            ((i - 1) << 4) | PARTY_ACTION_ABILITY_PREVENTS,
+                            6,
+                            gLastUsedAbility,
+                            gBattleStruct->battlerPartyOrders[gActiveBattler]);
                     }
                     else
                     {
-                        if (gActiveBattler == 2 && gChosenActionByBattler[0] == B_ACTION_SWITCH)
-                            BtlController_EmitChoosePokemon(BUFFER_A, PARTY_ACTION_CHOOSE_MON, *(gBattleStruct->monToSwitchIntoId + 0), ABILITY_NONE, gBattleStruct->battlerPartyOrders[gActiveBattler]);
-                        else if (gActiveBattler == 3 && gChosenActionByBattler[1] == B_ACTION_SWITCH)
-                            BtlController_EmitChoosePokemon(BUFFER_A, PARTY_ACTION_CHOOSE_MON, *(gBattleStruct->monToSwitchIntoId + 1), ABILITY_NONE, gBattleStruct->battlerPartyOrders[gActiveBattler]);
+                        if (gActiveBattler == 2
+                        && gChosenActionByBattler[0] == B_ACTION_SWITCH)
+                        {
+                            BtlController_EmitChoosePokemon(
+                                BUFFER_A,
+                                PARTY_ACTION_CHOOSE_MON,
+                                *(gBattleStruct->monToSwitchIntoId + 0),
+                                ABILITY_NONE,
+                                gBattleStruct->battlerPartyOrders[gActiveBattler]);
+                        }
+                        else if (gActiveBattler == 3
+                            && gChosenActionByBattler[1] == B_ACTION_SWITCH)
+                        {
+                            BtlController_EmitChoosePokemon(
+                                BUFFER_A,
+                                PARTY_ACTION_CHOOSE_MON,
+                                *(gBattleStruct->monToSwitchIntoId + 1),
+                                ABILITY_NONE,
+                                gBattleStruct->battlerPartyOrders[gActiveBattler]);
+                        }
                         else
-                            BtlController_EmitChoosePokemon(BUFFER_A, PARTY_ACTION_CHOOSE_MON, 6, ABILITY_NONE, gBattleStruct->battlerPartyOrders[gActiveBattler]);
+                        {
+                            BtlController_EmitChoosePokemon(
+                                BUFFER_A,
+                                PARTY_ACTION_CHOOSE_MON,
+                                6,
+                                ABILITY_NONE,
+                                gBattleStruct->battlerPartyOrders[gActiveBattler]);
+                        }
                     }
+
                     MarkBattlerForControllerExec(gActiveBattler);
                     break;
+                }
                 case B_ACTION_SAFARI_BALL:
                     if (IsPlayerPartyAndPokemonStorageFull())
                     {
@@ -3528,21 +3584,20 @@ u8 GetWhoStrikesFirst(u8 battler1, u8 battler2, bool8 ignoreChosenMoves)
             priorityBattler2 -= 5;
         }
     }
-    // both move priorities are different than 0
-    if (gBattleMoves[moveBattler1].priority != 0 || gBattleMoves[moveBattler2].priority != 0)
+    // Compare the modified move priorities.
+    if (priorityBattler1 != 0 || priorityBattler2 != 0)
     {
-        // both priorities are the same
-        if (gBattleMoves[moveBattler1].priority == gBattleMoves[moveBattler2].priority)
+        if (priorityBattler1 == priorityBattler2)
         {
             if (speedBattler1 == speedBattler2 && Random() & 1)
-                strikesFirst = 2; // same speeds, same priorities
+                strikesFirst = 2;
             else if (speedBattler1 < speedBattler2)
-                strikesFirst = 1; // battler2 has more speed
-            // else battler1 has more speed
+                strikesFirst = 1;
         }
-        else if (gBattleMoves[moveBattler1].priority < gBattleMoves[moveBattler2].priority)
-            strikesFirst = 1; // battler2's move has greater priority
-        // else battler1's move has greater priority
+        else if (priorityBattler1 < priorityBattler2)
+        {
+            strikesFirst = 1;
+        }
     }
     // both priorities are equal to 0
     else

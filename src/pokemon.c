@@ -2519,6 +2519,26 @@ s32 CalculateBaseDamage(struct BattlePokemon *attacker, struct BattlePokemon *de
         attack = (150 * attack) / 100;
     if (defender->ability == ABILITY_MARVEL_SCALE && defender->status1)
         defense = (150 * defense) / 100;
+    // Hyper Cutter: contact moves deal 10% more damage.
+    if (attacker->ability == ABILITY_HYPER_CUTTER
+     && (gBattleMoves[move].flags & FLAG_MAKES_CONTACT))
+    {
+        gBattleMovePower = (110 * gBattleMovePower) / 100;
+    }
+
+    // Battle Armor: reduces damage from physical moves by 20%.
+    if (defender->ability == ABILITY_BATTLE_ARMOR
+     && IS_TYPE_PHYSICAL(type))
+    {
+        gBattleMovePower = (80 * gBattleMovePower) / 100;
+    }
+
+    // Shell Armor: reduces damage from special moves by 20%.
+    if (defender->ability == ABILITY_SHELL_ARMOR
+     && IS_TYPE_SPECIAL(type))
+    {
+        gBattleMovePower = (80 * gBattleMovePower) / 100;
+    }
     if (type == TYPE_ELECTRIC && AbilityBattleEffects(ABILITYEFFECT_FIELD_SPORT, 0, 0, ABILITYEFFECT_MUD_SPORT, 0))
         gBattleMovePower /= 2;
     if (type == TYPE_FIRE && AbilityBattleEffects(ABILITYEFFECT_FIELD_SPORT, 0, 0, ABILITYEFFECT_WATER_SPORT, 0))

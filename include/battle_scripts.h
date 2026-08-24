@@ -229,6 +229,8 @@ extern const u8 BattleScript_GhostBallDodge[];
 extern const u8 BattleScript_OldMan_Pokedude_CaughtMessage[];
 extern const u8 BattleScript_SilphScopeUnveiled[];
 extern const u8 BattleScript_BattleTowerTrainerBattleWon[];
+extern const u8 BattleScript_MoveUsedWokeUpEarlyBird[];
+extern const u8 BattleScript_MonWokeUpInUproarEarlyBird[];
 
 extern const u8 *const gBattleScriptsForMoveEffects[];
 extern const u8 *const gBattlescriptsForBallThrow[];

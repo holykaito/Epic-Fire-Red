@@ -912,7 +912,12 @@ u8 DoBattlerEndTurnEffects(void)
                             gBattleMons[gBattlerAttacker].status1 &= ~STATUS1_SLEEP;
                             gBattleMons[gBattlerAttacker].status2 &= ~STATUS2_NIGHTMARE;
                             gBattleCommunication[MULTISTRING_CHOOSER] = 1;
-                            BattleScriptExecute(BattleScript_MonWokeUpInUproar);
+
+                            if (TrySetEarlyBirdRandomStat(gBattlerAttacker))
+                                BattleScriptExecute(BattleScript_MonWokeUpInUproarEarlyBird);
+                            else
+                                BattleScriptExecute(BattleScript_MonWokeUpInUproar);
+
                             gActiveBattler = gBattlerAttacker;
                             BtlController_EmitSetMonData(BUFFER_A, REQUEST_STATUS_BATTLE, 0, 4, &gBattleMons[gActiveBattler].status1);
                             MarkBattlerForControllerExec(gActiveBattler);
@@ -1250,6 +1255,32 @@ enum
     CANCELLER_END,
 };
 
+bool8 TrySetEarlyBirdRandomStat(u8 battler)
+{
+    u8 availableStats[5];
+    u8 availableCount = 0;
+    u8 stat;
+
+    if (gBattleMons[battler].ability != ABILITY_EARLY_BIRD)
+        return FALSE;
+
+    // Only Attack, Defense, Speed, Sp. Attack and Sp. Defense.
+    for (stat = STAT_ATK; stat <= STAT_SPDEF; stat++)
+    {
+        if (gBattleMons[battler].statStages[stat] < MAX_STAT_STAGE)
+            availableStats[availableCount++] = stat;
+    }
+
+    // All five valid stats are already at +6.
+    if (availableCount == 0)
+        return FALSE;
+
+    stat = availableStats[Random() % availableCount];
+
+    SET_STATCHANGER(stat, 2, FALSE);
+    return TRUE;
+}
+
 u8 AtkCanceller_UnableToUseMove(void)
 {
     u8 effect = 0;
@@ -1272,7 +1303,12 @@ u8 AtkCanceller_UnableToUseMove(void)
                     gBattleMons[gBattlerAttacker].status2 &= ~STATUS2_NIGHTMARE;
                     BattleScriptPushCursor();
                     gBattleCommunication[MULTISTRING_CHOOSER] = B_MSG_WOKE_UP_UPROAR;
-                    gBattlescriptCurrInstr = BattleScript_MoveUsedWokeUp;
+
+                    if (TrySetEarlyBirdRandomStat(gBattlerAttacker))
+                        gBattlescriptCurrInstr = BattleScript_MoveUsedWokeUpEarlyBird;
+                    else
+                        gBattlescriptCurrInstr = BattleScript_MoveUsedWokeUp;
+
                     effect = 2;
                 }
                 else
@@ -1300,7 +1336,12 @@ u8 AtkCanceller_UnableToUseMove(void)
                         gBattleMons[gBattlerAttacker].status2 &= ~STATUS2_NIGHTMARE;
                         BattleScriptPushCursor();
                         gBattleCommunication[MULTISTRING_CHOOSER] = B_MSG_WOKE_UP;
-                        gBattlescriptCurrInstr = BattleScript_MoveUsedWokeUp;
+
+                        if (TrySetEarlyBirdRandomStat(gBattlerAttacker))
+                            gBattlescriptCurrInstr = BattleScript_MoveUsedWokeUpEarlyBird;
+                        else
+                            gBattlescriptCurrInstr = BattleScript_MoveUsedWokeUp;
+
                         effect = 2;
                     }
                 }
@@ -1335,7 +1376,9 @@ u8 AtkCanceller_UnableToUseMove(void)
             gBattleStruct->atkCancellerTracker++;
             break;
         case CANCELLER_TRUANT: // truant
-            if (gBattleMons[gBattlerAttacker].ability == ABILITY_TRUANT && gDisableStructs[gBattlerAttacker].truantCounter)
+            if (gBattleMons[gBattlerAttacker].ability == ABILITY_TRUANT
+            && gDisableStructs[gBattlerAttacker].truantCounter
+            && gBattleMoves[gCurrentMove].power != 0)
             {
                 CancelMultiTurnMoves(gBattlerAttacker);
                 gHitMarker |= HITMARKER_UNABLE_TO_USE_MOVE;
@@ -2041,6 +2084,21 @@ u8 AbilityBattleEffects(u8 caseID, u8 battler, u8 ability, u8 special, u16 moveA
                  && (Random() % 3) == 0)
                 {
                     gBattleCommunication[MOVE_EFFECT_BYTE] = MOVE_EFFECT_AFFECTS_USER | MOVE_EFFECT_PARALYSIS;
+                    BattleScriptPushCursor();
+                    gBattlescriptCurrInstr = BattleScript_ApplySecondaryEffect;
+                    gHitMarker |= HITMARKER_STATUS_ABILITY_EFFECT;
+                    effect++;
+                }
+                break;
+            case ABILITY_STICKY_HOLD:
+                if (!(gMoveResultFlags & MOVE_RESULT_NO_EFFECT)
+                 && gBattleMons[gBattlerAttacker].hp != 0
+                 && !gProtectStructs[gBattlerAttacker].confusionSelfDmg
+                 && TARGET_TURN_DAMAGED
+                 && (gBattleMoves[move].flags & FLAG_MAKES_CONTACT))
+                {
+                    gBattleCommunication[MOVE_EFFECT_BYTE] =
+                        MOVE_EFFECT_AFFECTS_USER | MOVE_EFFECT_SPD_MINUS_1;
                     BattleScriptPushCursor();
                     gBattlescriptCurrInstr = BattleScript_ApplySecondaryEffect;
                     gHitMarker |= HITMARKER_STATUS_ABILITY_EFFECT;
