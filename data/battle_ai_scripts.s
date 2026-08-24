@@ -200,6 +200,7 @@ AI_CheckBadMove_CheckEffect::
 	if_effect EFFECT_WILL_O_WISP, AI_CBM_WillOWisp
 	if_effect EFFECT_MEMENTO, AI_CBM_Memento
 	if_effect EFFECT_FOCUS_PUNCH, AI_CBM_HighRiskForDamage
+	if_effect EFFECT_TAUNT, AI_CBM_Taunt
 	if_effect EFFECT_HELPING_HAND, AI_CBM_HelpingHand
 	if_effect EFFECT_TRICK, AI_CBM_TrickAndKnockOff
 	if_effect EFFECT_INGRAIN, AI_CBM_Ingrain
@@ -438,6 +439,8 @@ AI_CBM_DamageDuringSleep::
 	end
 
 AI_CBM_CantEscape::
+	get_ability AI_TARGET
+	if_equal ABILITY_RUN_AWAY, Score_Minus10
 	if_status2 AI_TARGET, STATUS2_ESCAPE_PREVENTION, Score_Minus10
 	end
 
@@ -536,6 +539,14 @@ AI_CBM_Hail::
 
 AI_CBM_Torment::
 	if_status2 AI_TARGET, STATUS2_TORMENT, Score_Minus10
+	end
+
+AI_CBM_Taunt::
+	get_ability AI_TARGET
+	if_equal ABILITY_OBLIVIOUS, Score_Minus10
+	if_equal ABILITY_OWN_TEMPO, Score_Minus10
+	if_equal ABILITY_INNER_FOCUS, Score_Minus10
+	if_target_taunted Score_Minus10
 	end
 
 AI_CBM_WillOWisp::
@@ -1525,6 +1536,8 @@ AI_CV_SuperFang_End::
 	end
 
 AI_CV_Trap::
+	get_ability AI_TARGET
+	if_equal ABILITY_RUN_AWAY, AI_CV_Trap_End
 	if_status AI_TARGET, STATUS1_TOXIC_POISON, AI_CV_Trap2
 	if_status2 AI_TARGET, STATUS2_CURSED, AI_CV_Trap2
 	if_status3 AI_TARGET, STATUS3_PERISH_SONG, AI_CV_Trap2
@@ -2378,7 +2391,11 @@ AI_CV_SandstormResistantTypes::
 	.byte -1
 
 AI_CV_FakeOut::
+	get_ability AI_TARGET
+	if_equal ABILITY_INNER_FOCUS, AI_CV_FakeOut_End
 	score +2
+
+AI_CV_FakeOut_End::
 	end
 
 AI_CV_SpitUp::
