@@ -347,19 +347,29 @@ BattleScript_EffectAbsorb::
 	jumpifability BS_TARGET, ABILITY_LIQUID_OOZE, BattleScript_AbsorbLiquidOoze
 	setbyte cMULTISTRING_CHOOSER, B_MSG_ABSORB
 	goto BattleScript_AbsorbUpdateHp
+
 BattleScript_AbsorbLiquidOoze::
 	manipulatedamage DMG_CHANGE_SIGN
 	setbyte cMULTISTRING_CHOOSER, B_MSG_ABSORB_OOZE
+
 BattleScript_AbsorbUpdateHp::
 	healthbarupdate BS_ATTACKER
 	datahpupdate BS_ATTACKER
 	jumpifmovehadnoeffect BattleScript_AbsorbTryFainting
 	printfromtable gAbsorbDrainStringIds
 	waitmessage B_WAIT_TIME_LONG
+	jumpifability BS_TARGET, ABILITY_LIQUID_OOZE, BattleScript_AbsorbLiquidOozePoison
+
 BattleScript_AbsorbTryFainting::
 	tryfaintmon BS_ATTACKER
 	tryfaintmon BS_TARGET
 	goto BattleScript_MoveEnd
+
+BattleScript_AbsorbLiquidOozePoison::
+	orword gHitMarker, HITMARKER_STATUS_ABILITY_EFFECT
+	setmoveeffect MOVE_EFFECT_POISON | MOVE_EFFECT_AFFECTS_USER
+	seteffectsecondary
+	goto BattleScript_AbsorbTryFainting
 
 BattleScript_EffectBurnHit::
 	setmoveeffect MOVE_EFFECT_BURN
