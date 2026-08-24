@@ -2523,14 +2523,50 @@ s32 CalculateBaseDamage(struct BattlePokemon *attacker, struct BattlePokemon *de
         gBattleMovePower /= 2;
     if (type == TYPE_FIRE && AbilityBattleEffects(ABILITYEFFECT_FIELD_SPORT, 0, 0, ABILITYEFFECT_WATER_SPORT, 0))
         gBattleMovePower /= 2;
-    if (type == TYPE_GRASS && attacker->ability == ABILITY_OVERGROW && attacker->hp <= (attacker->maxHP / 3))
-        gBattleMovePower = (150 * gBattleMovePower) / 100;
-    if (type == TYPE_FIRE && attacker->ability == ABILITY_BLAZE && attacker->hp <= (attacker->maxHP / 3))
-        gBattleMovePower = (150 * gBattleMovePower) / 100;
-    if (type == TYPE_WATER && attacker->ability == ABILITY_TORRENT && attacker->hp <= (attacker->maxHP / 3))
-        gBattleMovePower = (150 * gBattleMovePower) / 100;
-    if (type == TYPE_BUG && attacker->ability == ABILITY_SWARM && attacker->hp <= (attacker->maxHP / 3))
-        gBattleMovePower = (150 * gBattleMovePower) / 100;
+
+    // Overgrow
+    if (type == TYPE_GRASS && attacker->ability == ABILITY_OVERGROW)
+    {
+        if (attacker->hp * 3 < attacker->maxHP)
+            gBattleMovePower = (150 * gBattleMovePower) / 100;
+        else if (attacker->hp * 3 < attacker->maxHP * 2)
+            gBattleMovePower = (120 * gBattleMovePower) / 100;
+        else
+            gBattleMovePower = (110 * gBattleMovePower) / 100;
+    }
+
+    // Blaze
+    if (type == TYPE_FIRE && attacker->ability == ABILITY_BLAZE)
+    {
+        if (attacker->hp * 3 < attacker->maxHP)
+            gBattleMovePower = (150 * gBattleMovePower) / 100;
+        else if (attacker->hp * 3 < attacker->maxHP * 2)
+            gBattleMovePower = (120 * gBattleMovePower) / 100;
+        else
+            gBattleMovePower = (110 * gBattleMovePower) / 100;
+    }
+
+    // Torrent
+    if (type == TYPE_WATER && attacker->ability == ABILITY_TORRENT)
+    {
+        if (attacker->hp * 3 < attacker->maxHP)
+            gBattleMovePower = (150 * gBattleMovePower) / 100;
+        else if (attacker->hp * 3 < attacker->maxHP * 2)
+            gBattleMovePower = (120 * gBattleMovePower) / 100;
+        else
+            gBattleMovePower = (110 * gBattleMovePower) / 100;
+    }
+
+    // Swarm
+    if (type == TYPE_BUG && attacker->ability == ABILITY_SWARM)
+    {
+        if (attacker->hp * 3 < attacker->maxHP)
+            gBattleMovePower = (150 * gBattleMovePower) / 100;
+        else if (attacker->hp * 3 < attacker->maxHP * 2)
+            gBattleMovePower = (120 * gBattleMovePower) / 100;
+        else
+            gBattleMovePower = (110 * gBattleMovePower) / 100;
+    }
 
     // Self-destruct / Explosion cut defense in half
     if (gBattleMoves[gCurrentMove].effect == EFFECT_EXPLOSION)
