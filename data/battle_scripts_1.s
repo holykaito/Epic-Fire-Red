@@ -3440,6 +3440,14 @@ BattleScript_AllStatsUpRet::
 
 BattleScript_RapidSpinAway::
 	rapidspinfree
+	jumpifstat BS_ATTACKER, CMP_EQUAL, STAT_SPEED, MAX_STAT_STAGE, BattleScript_RapidSpinSpeedEnd
+	setstatchanger STAT_SPEED, 1, FALSE
+	statbuffchange MOVE_EFFECT_AFFECTS_USER, BattleScript_RapidSpinSpeedEnd
+	setgraphicalstatchangevalues
+	playanimation BS_ATTACKER, B_ANIM_STATS_CHANGE, sB_ANIM_ARG1
+	printfromtable gStatUpStringIds
+	waitmessage B_WAIT_TIME_LONG
+BattleScript_RapidSpinSpeedEnd:
 	return
 
 BattleScript_WrapFree::

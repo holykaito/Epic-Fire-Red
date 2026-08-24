@@ -2562,7 +2562,14 @@ s32 CalculateBaseDamage(struct BattlePokemon *attacker, struct BattlePokemon *de
         }
         else
             APPLY_STAT_MOD(damageHelper, defender, defense, STAT_DEF)
-
+            
+        // Hail raises the Defense of Ice-type Pokemon by 50%
+        if (WEATHER_HAS_EFFECT2
+            && (gBattleWeather & B_WEATHER_HAIL)
+            && (defender->type1 == TYPE_ICE || defender->type2 == TYPE_ICE))
+        {
+            damageHelper = (15 * damageHelper) / 10;
+        }
         damage = damage / damageHelper;
         damage /= 50;
 
@@ -2603,6 +2610,14 @@ s32 CalculateBaseDamage(struct BattlePokemon *attacker, struct BattlePokemon *de
         }
         else
             APPLY_STAT_MOD(damage, attacker, spAttack, STAT_SPATK)
+        
+        // Sandstorm raises the Sp. Def of Rock-type Pokemon by 50%
+        if (WEATHER_HAS_EFFECT2
+            && (gBattleWeather & B_WEATHER_SANDSTORM)
+            && (defender->type1 == TYPE_ROCK || defender->type2 == TYPE_ROCK))
+        {
+            damageHelper = (15 * damageHelper) / 10;
+        }
 
         damage = damage * gBattleMovePower;
         damage *= (2 * attacker->level / 5 + 2);
