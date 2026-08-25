@@ -134,7 +134,8 @@ struct ResourceFlags
     u32 flags[4];
 };
 
-#define RESOURCE_FLAG_FLASH_FIRE 1
+#define RESOURCE_FLAG_FLASH_FIRE  1
+#define RESOURCE_FLAG_COLOR_CHANGE (1 << 1)
 
 struct DisableStruct
 {

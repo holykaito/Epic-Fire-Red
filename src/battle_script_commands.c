@@ -1295,6 +1295,35 @@ static void Cmd_typecalc(void)
 
     GET_MOVE_TYPE(gCurrentMove, moveType);
 
+    // Color Change blocks moves matching the type it changed into.
+    // This check is also necessary for later hits of multi-hit moves.
+    if (gBattleMons[gBattlerTarget].ability == ABILITY_COLOR_CHANGE
+     && (gBattleResources->flags->flags[gBattlerTarget]
+         & RESOURCE_FLAG_COLOR_CHANGE)
+     && gBattleMoves[gCurrentMove].power != 0
+     && IS_BATTLER_OF_TYPE(gBattlerTarget, moveType))
+    {
+        gLastUsedAbility = ABILITY_COLOR_CHANGE;
+        gBattleMoveDamage = 0;
+
+        gMoveResultFlags |=
+            MOVE_RESULT_MISSED
+          | MOVE_RESULT_DOESNT_AFFECT_FOE;
+
+        gLastLandedMoves[gBattlerTarget] = MOVE_NONE;
+        gLastHitByType[gBattlerTarget] = 0;
+
+        gBattleCommunication[MISS_TYPE] = B_MSG_AVOIDED_DMG;
+        gProtectStructs[gBattlerAttacker].targetNotAffected = TRUE;
+
+        RecordAbilityBattle(
+            gBattlerTarget,
+            ABILITY_COLOR_CHANGE);
+
+        gBattlescriptCurrInstr++;
+        return;
+    }
+
     // check stab
     if (IS_BATTLER_OF_TYPE(gBattlerAttacker, moveType))
     {
@@ -1473,6 +1502,22 @@ u8 TypeCalc(u16 move, u8 attacker, u8 defender)
         return 0;
 
     moveType = gBattleMoves[move].type;
+
+    // Let the AI recognize Color Change's active immunity.
+    if (gBattleMons[defender].ability == ABILITY_COLOR_CHANGE
+     && (gBattleResources->flags->flags[defender]
+         & RESOURCE_FLAG_COLOR_CHANGE)
+     && gBattleMoves[move].power != 0
+     && IS_BATTLER_OF_TYPE(defender, moveType))
+    {
+        gBattleMoveDamage = 0;
+
+        flags |=
+            MOVE_RESULT_MISSED
+          | MOVE_RESULT_DOESNT_AFFECT_FOE;
+
+        return flags;
+    }
 
     // check stab
     if (IS_BATTLER_OF_TYPE(attacker, moveType))

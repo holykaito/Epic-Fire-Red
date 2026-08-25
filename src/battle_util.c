@@ -1999,6 +1999,25 @@ u8 AbilityBattleEffects(u8 caseID, u8 battler, u8 ability, u8 special, u16 moveA
             {
                 switch (gLastUsedAbility)
                 {
+                case ABILITY_COLOR_CHANGE:
+                    if ((gBattleResources->flags->flags[battler]
+                        & RESOURCE_FLAG_COLOR_CHANGE)
+                    && move != MOVE_STRUGGLE
+                    && gBattleMoves[move].power != 0
+                    && IS_BATTLER_OF_TYPE(battler, moveType))
+                    {
+                        if (gProtectStructs[gBattlerAttacker].notFirstStrike)
+                            gBattlescriptCurrInstr =
+                                BattleScript_MonMadeMoveUseless;
+                        else
+                            gBattlescriptCurrInstr =
+                                BattleScript_MonMadeMoveUseless_PPLoss;
+
+                        // Use 2 so it does not enter the HP recovery code
+                        // used by Volt Absorb and Water Absorb.
+                        effect = 2;
+                    }
+                    break;
                 case ABILITY_LIGHTNING_ROD:
                     if (moveType == TYPE_ELECTRIC
                         && gBattlerAttacker != battler)
@@ -2084,13 +2103,18 @@ u8 AbilityBattleEffects(u8 caseID, u8 battler, u8 ability, u8 special, u16 moveA
             {
             case ABILITY_COLOR_CHANGE:
                 if (!(gMoveResultFlags & MOVE_RESULT_NO_EFFECT)
-                 && move != MOVE_STRUGGLE
-                 && gBattleMoves[move].power != 0
-                 && TARGET_TURN_DAMAGED
-                 && !IS_BATTLER_OF_TYPE(battler, moveType)
-                 && gBattleMons[battler].hp != 0)
+                && move != MOVE_STRUGGLE
+                && gBattleMoves[move].power != 0
+                && TARGET_TURN_DAMAGED
+                && !IS_BATTLER_OF_TYPE(battler, moveType)
+                && gBattleMons[battler].hp != 0)
                 {
                     SET_BATTLER_TYPE(battler, moveType);
+
+                    // Color Change has successfully changed this Pokemon's type.
+                    gBattleResources->flags->flags[battler]
+                        |= RESOURCE_FLAG_COLOR_CHANGE;
+
                     PREPARE_TYPE_BUFFER(gBattleTextBuff1, moveType);
                     BattleScriptPushCursor();
                     gBattlescriptCurrInstr = BattleScript_ColorChangeActivates;
