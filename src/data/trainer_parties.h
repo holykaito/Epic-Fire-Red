@@ -5604,30 +5604,54 @@ static const struct TrainerMonItemCustomMoves sParty_EliteFourLance[] = {
 static const struct TrainerMonNoItemCustomMoves sParty_LeaderBrock[] = {
     {
         .iv = 0,
-        .lvl = 12,
+        .lvl = 14,
         .species = SPECIES_GEODUDE,
-        .moves = {MOVE_TACKLE, MOVE_DEFENSE_CURL, MOVE_NONE, MOVE_NONE},
+        .moves = {MOVE_TACKLE, MOVE_DEFENSE_CURL, MOVE_ROCK_THROW, MOVE_NONE},
     },
     {
         .iv = 0,
-        .lvl = 14,
+        .lvl = 13,
+        .species = SPECIES_KABUTO,
+        .moves = {MOVE_ABSORB, MOVE_SCRATCH, MOVE_HARDEN, MOVE_SAND_ATTACK},
+    },
+    {
+        .iv = 0,
+        .lvl = 13,
+        .species = SPECIES_OMANYTE,
+        .moves = {MOVE_BIND, MOVE_WITHDRAW, MOVE_SAND_ATTACK, MOVE_ROLLOUT},
+    },
+    {
+        .iv = 0,
+        .lvl = 15,
         .species = SPECIES_ONIX,
-        .moves = {MOVE_TACKLE, MOVE_BIND, MOVE_ROCK_TOMB, MOVE_NONE},
+        .moves = {MOVE_TACKLE, MOVE_BIND, MOVE_ROCK_TOMB, MOVE_HARDEN},
     },
 };
 
 static const struct TrainerMonNoItemCustomMoves sParty_LeaderMisty[] = {
     {
         .iv = 0,
-        .lvl = 18,
-        .species = SPECIES_STARYU,
-        .moves = {MOVE_TACKLE, MOVE_HARDEN, MOVE_RECOVER, MOVE_WATER_PULSE},
+        .lvl = 19,
+        .species = SPECIES_GOLDEEN,
+        .moves = {MOVE_HORN_ATTACK, MOVE_SUPERSONIC, MOVE_MUD_SLAP, MOVE_WATER_PULSE},
+    },
+    {
+        .iv = 0,
+        .lvl = 20,
+        .species = SPECIES_PSYDUCK,
+        .moves = {MOVE_FURY_SWIPES, MOVE_DISABLE, MOVE_HYPNOSIS, MOVE_WATER_PULSE},
+    },
+    {
+        .iv = 0,
+        .lvl = 20,
+        .species = SPECIES_SLOWPOKE,
+        .moves = {MOVE_DISABLE, MOVE_YAWN, MOVE_CONFUSION, MOVE_WATER_PULSE},
     },
     {
         .iv = 0,
         .lvl = 21,
         .species = SPECIES_STARMIE,
-        .moves = {MOVE_SWIFT, MOVE_RECOVER, MOVE_RAPID_SPIN, MOVE_WATER_PULSE},
+        .moves = {MOVE_SWIFT, MOVE_RECOVER, MOVE_CONFUSE_RAY, MOVE_WATER_PULSE},
     },
 };
 
