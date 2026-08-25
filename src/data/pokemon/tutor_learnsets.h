@@ -349,6 +349,7 @@ static const u16 sTutorLearnsets[] =
 
     [SPECIES_VENOMOTH] = TUTOR(MOVE_DOUBLE_EDGE)
                        | TUTOR(MOVE_MIMIC)
+                       | TUTOR(MOVE_DREAM_EATER)
                        | TUTOR(MOVE_SUBSTITUTE),
 
     [SPECIES_DIGLETT] = TUTOR(MOVE_BODY_SLAM)
