@@ -5317,6 +5317,15 @@ static void CB2_UseEvolutionStone(void)
 
 static bool8 MonCanEvolve(void)
 {
+    switch (gSpecialVar_ItemId)
+    {
+    case ITEM_KINGS_ROCK:
+    case ITEM_METAL_COAT:
+    case ITEM_DRAGON_SCALE:
+    case ITEM_UP_GRADE:
+        return TRUE;
+    }
+
     if (!IsNationalPokedexEnabled()
      && GetEvolutionTargetSpecies(&gPlayerParty[gPartyMenu.slotId], EVO_MODE_ITEM_USE, gSpecialVar_ItemId) > KANTO_DEX_COUNT)
         return FALSE;
