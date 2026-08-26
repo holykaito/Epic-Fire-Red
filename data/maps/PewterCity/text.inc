@@ -120,35 +120,26 @@ PewterCity_Text_MonsWillUseHeldBerriesOnTheirOwn::
 PewterCity_Text_OhPlayer::
     .string "Oh, {PLAYER}{KUN}!$"
 
-PewterCity_Text_AskedToDeliverThis::
+PewterCity_Text_AskedToDeliverGreatBalls::
     .string "I'm glad I caught up to you.\n"
     .string "I'm PROF. OAK's AIDE.\p"
-    .string "I've been asked to deliver this,\n"
-    .string "so here you go.$"
+    .string "The professor asked me to give\n"
+    .string "you these for the road.$"
 
-PewterCity_Text_ReceivedRunningShoesFromAide::
-    .string "{PLAYER} received the\n"
-    .string "RUNNING SHOES from the AIDE.$"
+PewterCity_Text_ReceivedFiveGreatBallsFromAide::
+    .string "{PLAYER} received five\n"
+    .string "GREAT BALLS from the AIDE.$"
 
-PewterCity_Text_SwitchedShoesWithRunningShoes::
-    .string "{PLAYER} switched shoes with the\n"
-    .string "RUNNING SHOES.$"
+PewterCity_Text_GreatBallsAdvice::
+    .string "GREAT BALLS work better than\n"
+    .string "ordinary POKé BALLS.\p"
+    .string "They should help you catch tougher\n"
+    .string "POKéMON on your journey.\p"
+    .string "I must be getting back to the LAB.\n"
+    .string "Good luck, {PLAYER}!$"
 
-PewterCity_Text_ExplainRunningShoes::
-    .string "Press the B Button to run.\n"
-    .string "But only where there's room to run!$"
-
-PewterCity_Text_MustBeGoingBackToLab::
-    .string "Well, I must be going back to\n"
-    .string "the LAB.\p"
-    .string "Bye-bye!$"
-
-PewterCity_Text_RunningShoesLetterFromMom::
-    .string "There's a letter attached…\p"
-    .string "Dear {PLAYER},\p"
-    .string "Here is a pair of RUNNING SHOES\n"
-    .string "for my beloved challenger.\p"
-    .string "Remember, I'll always cheer for\n"
-    .string "you! Don't ever give up!\p"
-    .string "From Mom$"
+PewterCity_Text_NoRoomForGreatBalls::
+    .string "Your BAG is full.\p"
+    .string "Make some room, then come back\n"
+    .string "and talk to me.$"
 

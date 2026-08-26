@@ -36,3 +36,7 @@ CinnabarIsland_PokemonCenter_1F_Text_LetsGo::
     .string "Well, that's it.\n"
     .string "Let's go!$"
 
+CinnabarIsland_PokemonCenter_1F_Text_NeedSixBadges::
+    .string "BILL: You're not ready yet.\p"
+    .string "Come back when you've earned at\n"
+    .string "least six GYM BADGES.$"

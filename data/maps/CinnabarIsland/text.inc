@@ -73,3 +73,17 @@ CinnabarIsland_Text_IfYouHaveTriPassYouCanGoAgain::
     .string "VERMILION PORT.\p"
     .string "All right, thanks for your company!$"
 
+CinnabarIsland_Text_SabrinaFan::
+    .string "SABRINA's psychic powers are\n"
+    .string "absolute! Her visions never fail!\p"
+    .string "She foresaw danger inside this\n"
+    .string "MANSION.\p"
+    .string "Only one who has earned her\n"
+    .string "MARSHBADGE may pass!$"
+
+CinnabarIsland_Text_BillNotEnoughBadges::
+    .string "BILL: Hold on, {PLAYER}.\p"
+    .string "ONE ISLAND isn't a place for an\n"
+    .string "inexperienced TRAINER.\p"
+    .string "Come back after earning at least\n"
+    .string "six GYM BADGES.$"

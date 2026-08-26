@@ -29,6 +29,7 @@ CinnabarIsland_PokemonCenter_1F_EventScript_Youngster::
 CinnabarIsland_PokemonCenter_1F_EventScript_Bill::
 	lock
 	faceplayer
+	goto_if_unset FLAG_BADGE06_GET, CinnabarIsland_PokemonCenter_1F_EventScript_BillNotEnoughBadges
 	msgbox CinnabarIsland_PokemonCenter_1F_Text_ReadyToSailToOneIsland, MSGBOX_YESNO
 	goto_if_eq VAR_RESULT, NO, CinnabarIsland_PokemonCenter_1F_EventScript_NotReadyToSail
 	msgbox CinnabarIsland_PokemonCenter_1F_Text_LetsGo
@@ -46,6 +47,11 @@ CinnabarIsland_PokemonCenter_1F_EventScript_Bill::
 	clearflag FLAG_HIDE_CINNABAR_BILL
 	warp MAP_CINNABAR_ISLAND, 14, 11
 	waitstate
+	release
+	end
+
+CinnabarIsland_PokemonCenter_1F_EventScript_BillNotEnoughBadges::
+	msgbox CinnabarIsland_PokemonCenter_1F_Text_NeedSixBadges
 	release
 	end
 

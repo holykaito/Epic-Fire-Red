@@ -1286,14 +1286,13 @@ EVChecker_Text_ChooseMon:
 	.string "Which POKéMON should I examine?$"
 
 EVChecker_Text_Page1:
-	.string "{STR_VAR_1}'s EVs:\n"
-	.string "HP: {STR_VAR_2}  Attack: {STR_VAR_3}\l"
-	.string "Defense: {STR_VAR_4}.$"
+	.string "{STR_VAR_1}  Attack: {STR_VAR_2}\l"
+	.string "Defense: {STR_VAR_3}.$"
 
 EVChecker_Text_Page2:
 	.string "Speed: {STR_VAR_1}\n"
 	.string "Sp. Atk: {STR_VAR_2}\l"
-	.string "Sp. Def: {STR_VAR_3}  Total: {STR_VAR_4}.$"
+	.string "Sp. Def: {STR_VAR_3}.$"
 
 EVChecker_Text_Egg:
 	.string "I can't examine an EGG.$"
@@ -1346,14 +1345,13 @@ IVChecker_Text_ChooseMon:
 	.string "Which POKéMON should I examine?$"
 
 IVChecker_Text_Page1:
-	.string "{STR_VAR_1}'s IVs:\n"
-	.string "HP: {STR_VAR_2}  Attack: {STR_VAR_3}\l"
-	.string "Defense: {STR_VAR_4}.$"
+	.string "{STR_VAR_1}  Attack: {STR_VAR_2}\l"
+	.string "Defense: {STR_VAR_3}.$"
 
 IVChecker_Text_Page2:
 	.string "Speed: {STR_VAR_1}\n"
-	.string "Sp. Atk: {STR_VAR_2}  Sp. Def: {STR_VAR_3}\l"
-	.string "Perfect IVs: {STR_VAR_4}/6.$"
+	.string "Sp. Atk: {STR_VAR_2}\l"
+	.string "Sp. Def: {STR_VAR_3}.$"
 
 IVChecker_Text_Egg:
 	.string "I can't examine an EGG.$"

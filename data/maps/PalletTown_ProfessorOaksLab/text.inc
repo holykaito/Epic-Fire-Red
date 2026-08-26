@@ -126,6 +126,20 @@ PalletTown_ProfessorOaksLab_Text_ReceivedMonFromOak::
     .string "{PLAYER} received the {STR_VAR_1}\n"
     .string "from PROF. OAK!$"
 
+PalletTown_ProfessorOaksLab_Text_OakGiveRunningShoes::
+    .string "OAK: Before you set out,\n"
+    .string "take these with you.\p"
+    .string "They'll make your journey much\n"
+    .string "easier.$"
+
+PalletTown_ProfessorOaksLab_Text_ReceivedRunningShoesFromOak::
+    .string "{PLAYER} received the\n"
+    .string "RUNNING SHOES from PROF. OAK!$"
+
+PalletTown_ProfessorOaksLab_Text_ExplainRunningShoes::
+    .string "Press the B Button while moving\n"
+    .string "to run.$"
+
 PalletTown_ProfessorOaksLab_Text_OakCanReachNextTownWithMon::
     .string "OAK: If a wild POKéMON appears,\n"
     .string "your POKéMON can battle it.\p"
@@ -355,3 +369,50 @@ PalletTown_ProfessorOaksLab_Text_RivalIllCompleteThePokedex::
     .string "ONE ISLAND first…\p"
     .string "Anyways, I'm outta here!$"
 
+PalletTown_ProfessorOaksLab_Text_OakOfferJohtoStarter::
+    .string "OAK: Before you go, there is one\n"
+    .string "more thing.\p"
+    .string "These three POKéMON were sent here\n"
+    .string "from the JOHTO region.\p"
+    .string "You've proven yourself as a true\n"
+    .string "POKéMON CHAMPION.\p"
+    .string "Choose one to accompany you on\n"
+    .string "your next journey!$"
+
+PalletTown_ProfessorOaksLab_Text_OakWaitingForJohtoChoice::
+    .string "OAK: Go on, {PLAYER}.\p"
+    .string "Choose one of the three POKéMON\n"
+    .string "from the JOHTO region.$"
+
+PalletTown_ProfessorOaksLab_Text_ChooseChikorita::
+    .string "CHIKORITA is calm and easy to\n"
+    .string "raise.\p"
+    .string "Do you choose the GRASS POKéMON\n"
+    .string "CHIKORITA?$"
+
+PalletTown_ProfessorOaksLab_Text_ChooseTotodile::
+    .string "TOTODILE is energetic and has\n"
+    .string "powerful jaws.\p"
+    .string "Do you choose the WATER POKéMON\n"
+    .string "TOTODILE?$"
+
+PalletTown_ProfessorOaksLab_Text_ChooseCyndaquil::
+    .string "CYNDAQUIL is timid, but its flames\n"
+    .string "hold great power.\p"
+    .string "Do you choose the FIRE POKéMON\n"
+    .string "CYNDAQUIL?$"
+
+PalletTown_ProfessorOaksLab_Text_ReceivedJohtoStarter::
+    .string "{PLAYER} received {STR_VAR_1}\n"
+    .string "from PROF. OAK!$"
+
+PalletTown_ProfessorOaksLab_Text_NoRoomForJohtoStarter::
+    .string "There is no room for another\n"
+    .string "POKéMON.\p"
+    .string "Make space in your party or a PC\n"
+    .string "BOX, then try again.$"
+
+PalletTown_ProfessorOaksLab_Text_OakAfterJohtoChoice::
+    .string "OAK: Excellent choice!\p"
+    .string "Raise that POKéMON with the same\n"
+    .string "care you've shown your others.$"

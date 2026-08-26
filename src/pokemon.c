@@ -4757,7 +4757,7 @@ bool8 PokemonItemUseNoEffect(struct Pokemon *mon, u16 item, u8 partyIndex, u8 mo
 
             // Rare Candy
             if ((itemEffect[cmdIndex] & ITEM3_LEVEL_UP)
-             && GetMonData(mon, MON_DATA_LEVEL, NULL) < GetPlayerLevelCap()
+             && GetMonData(mon, MON_DATA_LEVEL, NULL) < GetPlayerLevelCap())
                 retVal = FALSE;
 
             // Cure status
@@ -6197,24 +6197,27 @@ u8 GetPlayerLevelCap(void)
         return 63;
 
     if (FlagGet(FLAG_BADGE07_GET))
-        return 50;
+        return 54;
 
     if (FlagGet(FLAG_BADGE06_GET))
-        return 47;
+        return 51;
 
     if (FlagGet(FLAG_BADGE05_GET))
+        return 48;
+
+    if (FlagGet(FLAG_BADGE04_GET))
         return 43;
 
     if (FlagGet(FLAG_BADGE03_GET))
-        return 29;
+        return 35;
 
     if (FlagGet(FLAG_BADGE02_GET))
-        return 24;
+        return 27;
 
     if (FlagGet(FLAG_BADGE01_GET))
         return 21;
 
-    return 14;
+    return 15;
 }
 
 u16 FacilityClassToPicIndex(u16 facilityClass)

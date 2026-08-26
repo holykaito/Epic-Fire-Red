@@ -655,32 +655,32 @@ PewterCity_EventScript_RunningShoesAide::
 	lock
 	faceplayer
 	setvar VAR_TEMP_1, 0
-	call PewterCity_EventScript_AideGiveRunningShoes
+	call PewterCity_EventScript_AideGiveGreatBalls
 	release
 	end
 
 PewterCity_EventScript_RunningShoesAideTriggerTop::
 	lockall
 	setvar VAR_TEMP_1, 1
-	call PewterCity_EventScript_AideGiveRunningShoes
+	call PewterCity_EventScript_AideGiveGreatBalls
 	releaseall
 	end
 
 PewterCity_EventScript_RunningShoesAideTriggerMid::
 	lockall
 	setvar VAR_TEMP_1, 2
-	call PewterCity_EventScript_AideGiveRunningShoes
+	call PewterCity_EventScript_AideGiveGreatBalls
 	releaseall
 	end
 
 PewterCity_EventScript_RunningShoesAideTriggerBottom::
 	lockall
 	setvar VAR_TEMP_1, 3
-	call PewterCity_EventScript_AideGiveRunningShoes
+	call PewterCity_EventScript_AideGiveGreatBalls
 	releaseall
 	end
 
-PewterCity_EventScript_AideGiveRunningShoes::
+PewterCity_EventScript_AideGiveGreatBalls::
 	textcolor NPC_TEXT_COLOR_MALE
 	call_if_eq VAR_TEMP_1, 1, PewterCity_EventScript_AideNoticePlayer
 	call_if_eq VAR_TEMP_1, 2, PewterCity_EventScript_AideNoticePlayer
@@ -696,31 +696,29 @@ PewterCity_EventScript_AideGiveRunningShoes::
 	call_if_eq VAR_TEMP_1, 1, PewterCity_EventScript_AideApproachPlayer1
 	call_if_eq VAR_TEMP_1, 2, PewterCity_EventScript_AideApproachPlayer2
 	call_if_eq VAR_TEMP_1, 3, PewterCity_EventScript_AideApproachPlayer3
-	msgbox PewterCity_Text_AskedToDeliverThis
+	msgbox PewterCity_Text_AskedToDeliverGreatBalls
+
+	checkitemspace ITEM_GREAT_BALL, 5
+	goto_if_eq VAR_RESULT, FALSE, PewterCity_EventScript_AideNoRoomForGreatBalls
+
 	textcolor NPC_TEXT_COLOR_NEUTRAL
-	playfanfare MUS_OBTAIN_KEY_ITEM
-	message PewterCity_Text_ReceivedRunningShoesFromAide
-	waitmessage
-	waitfanfare
-	msgbox PewterCity_Text_SwitchedShoesWithRunningShoes
-	special DisableMsgBoxWalkaway
-	signmsg
-	msgbox PewterCity_Text_ExplainRunningShoes
-	normalmsg
+	giveitem_msg PewterCity_Text_ReceivedFiveGreatBallsFromAide, ITEM_GREAT_BALL, 5
 	call EventScript_RestorePrevTextColor
-	msgbox PewterCity_Text_MustBeGoingBackToLab
+
+	msgbox PewterCity_Text_GreatBallsAdvice
 	closemessage
+
 	call_if_eq VAR_TEMP_1, 0, PewterCity_EventScript_AideExit0
 	call_if_eq VAR_TEMP_1, 1, PewterCity_EventScript_AideExit1
 	call_if_eq VAR_TEMP_1, 2, PewterCity_EventScript_AideExit2
 	call_if_eq VAR_TEMP_1, 3, PewterCity_EventScript_AideExit3
 	delay 30
-	textcolor NPC_TEXT_COLOR_NEUTRAL
-	msgbox PewterCity_Text_RunningShoesLetterFromMom
-	closemessage
 	removeobject LOCALID_PEWTER_AIDE
-	setflag FLAG_SYS_B_DASH
 	setvar VAR_MAP_SCENE_PEWTER_CITY, 2
+	return
+
+PewterCity_EventScript_AideNoRoomForGreatBalls::
+	msgbox PewterCity_Text_NoRoomForGreatBalls
 	return
 
 PewterCity_EventScript_AideNoticePlayer::

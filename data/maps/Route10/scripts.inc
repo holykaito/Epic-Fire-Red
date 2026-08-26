@@ -15,3 +15,7 @@ Route10_EventScript_SouthRockTunnelSign::
 Route10_EventScript_PowerPlantSign::
 	msgbox Route10_Text_PowerPlant, MSGBOX_SIGN
 	end
+
+Route10_EventScript_RockTunnelGuard::
+	msgbox Route10_Text_RockTunnelGuard, MSGBOX_NPC
+	end

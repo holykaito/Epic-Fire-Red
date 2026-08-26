@@ -98,9 +98,21 @@ CinnabarIsland_EventScript_BillScene::
 	call_if_unset FLAG_TEMP_2, CinnabarIsland_EventScript_BillApproachPlayer1
 	call_if_set FLAG_TEMP_2, CinnabarIsland_EventScript_BillApproachPlayer2
 	msgbox CinnabarIsland_Text_HeyIfItIsntPlayer
+	goto_if_unset FLAG_BADGE06_GET, CinnabarIsland_EventScript_BillNotEnoughBadges
 	msgbox CinnabarIsland_Text_ComeWithMeToOneIsland, MSGBOX_YESNO
 	goto_if_eq VAR_RESULT, YES, CinnabarIsland_EventScript_AgreeSailToOneIsland
 	goto_if_eq VAR_RESULT, NO, CinnabarIsland_EventScript_DeclineSailToOneIsland
+	end
+
+CinnabarIsland_EventScript_BillNotEnoughBadges::
+	msgbox CinnabarIsland_Text_BillNotEnoughBadges
+	closemessage
+	call_if_unset FLAG_TEMP_2, CinnabarIsland_EventScript_BillExitToPokeCenter
+	call_if_set FLAG_TEMP_2, CinnabarIsland_EventScript_BillReturnToPokeCenter
+	removeobject LOCALID_CINNABAR_BILL
+	setvar VAR_MAP_SCENE_CINNABAR_ISLAND, 2
+	clearflag FLAG_HIDE_CINNABAR_POKECENTER_BILL
+	releaseall
 	end
 
 CinnabarIsland_EventScript_BillFacePlayer1::
@@ -349,4 +361,8 @@ CinnabarIsland_EventScript_GymSign::
 	famechecker FAMECHECKER_BLAINE, 0
 	msgbox CinnabarIsland_Text_GymSign
 	releaseall
+	end
+
+CinnabarIsland_EventScript_SabrinaFan::
+	msgbox CinnabarIsland_Text_SabrinaFan, MSGBOX_NPC
 	end

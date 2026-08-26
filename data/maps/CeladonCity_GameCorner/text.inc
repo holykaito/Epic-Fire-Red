@@ -106,6 +106,12 @@ CeladonCity_GameCorner_Text_WatchReelsClosely::
     .string "The trick is to watch the reels\n"
     .string "closely.$"
 
+CeladonCity_GameCorner_Text_GruntBeforeErika::
+    .string "I'm guarding this poster!\n"
+    .string "Don't bother me, kid.\p"
+    .string "Come back after you've proven\n"
+    .string "yourself at CELADON GYM.$"
+
 CeladonCity_GameCorner_Text_GruntIntro::
     .string "I'm guarding this poster!\n"
     .string "Go away, or else!$"

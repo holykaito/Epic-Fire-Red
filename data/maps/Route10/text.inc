@@ -84,3 +84,8 @@ Route10_Text_RockTunnel::
 Route10_Text_PowerPlant::
     .string "POWER PLANT$"
 
+Route10_Text_RockTunnelGuard::
+    .string "Sorry, I can't let you enter\n"
+    .string "ROCK TUNNEL yet.\p"
+    .string "Come back after earning the\n"
+    .string "THUNDERBADGE at VERMILION GYM.$"

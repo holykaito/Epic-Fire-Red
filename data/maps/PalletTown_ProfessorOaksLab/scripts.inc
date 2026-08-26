@@ -17,7 +17,14 @@ PalletTown_ProfessorOaksLab_OnTransition::
 	call_if_eq VAR_MAP_SCENE_PALLET_TOWN_PROFESSOR_OAKS_LAB, 7, PalletTown_ProfessorOaksLab_EventScript_ReadyOakForNationalDexScene
 	call_if_eq VAR_MAP_SCENE_PALLET_TOWN_PROFESSOR_OAKS_LAB, 8, PalletTown_ProfessorOaksLab_EventScript_SetNationalDexSceneFinished
 	call_if_set FLAG_GOT_POKEBALLS_FROM_OAK_AFTER_22_RIVAL, PalletTown_ProfessorOaksLab_EventScript_SetSkipPokeBallCheck
+	call_if_eq VAR_MAP_SCENE_PALLET_TOWN_PROFESSOR_OAKS_LAB, 10, PalletTown_ProfessorOaksLab_EventScript_ReadyJohtoStarterBalls
 	end
+
+PalletTown_ProfessorOaksLab_EventScript_ReadyJohtoStarterBalls::
+	clearflag FLAG_HIDE_BULBASAUR_BALL
+	clearflag FLAG_HIDE_SQUIRTLE_BALL
+	clearflag FLAG_HIDE_CHARMANDER_BALL
+	return
 
 PalletTown_ProfessorOaksLab_EventScript_SetSkipPokeBallCheck::
 	setflag FLAG_OAK_SKIP_22_RIVAL_CHECK
@@ -115,7 +122,20 @@ PalletTown_ProfessorOaksLab_EventScript_NationalDexScene::
 	call_if_eq VAR_FACING, DIR_WEST, PalletTown_ProfessorOaksLab_EventScript_RivalExit
 	removeobject LOCALID_OAKS_LAB_RIVAL
 	fadedefaultbgm
-	setvar VAR_MAP_SCENE_PALLET_TOWN_PROFESSOR_OAKS_LAB, 8
+
+	textcolor NPC_TEXT_COLOR_MALE
+	msgbox PalletTown_ProfessorOaksLab_Text_OakOfferJohtoStarter
+	closemessage
+
+	clearflag FLAG_HIDE_BULBASAUR_BALL
+	clearflag FLAG_HIDE_SQUIRTLE_BALL
+	clearflag FLAG_HIDE_CHARMANDER_BALL
+
+	addobject LOCALID_BULBASAUR_BALL
+	addobject LOCALID_SQUIRTLE_BALL
+	addobject LOCALID_CHARMANDER_BALL
+
+	setvar VAR_MAP_SCENE_PALLET_TOWN_PROFESSOR_OAKS_LAB, 10
 	releaseall
 	end
 
@@ -568,6 +588,8 @@ PalletTown_ProfessorOaksLab_EventScript_ProfOak::
 	lock
 	faceplayer
 	goto_if_set SHOWED_OAK_COMPLETE_DEX, PalletTown_ProfessorOaksLab_EventScript_OakJustShownCompleteDex
+	goto_if_eq VAR_MAP_SCENE_PALLET_TOWN_PROFESSOR_OAKS_LAB, 10, PalletTown_ProfessorOaksLab_EventScript_OakWaitingForJohtoChoice
+	goto_if_eq VAR_MAP_SCENE_PALLET_TOWN_PROFESSOR_OAKS_LAB, 9, PalletTown_ProfessorOaksLab_EventScript_RatePokedex
 	goto_if_eq VAR_MAP_SCENE_PALLET_TOWN_PROFESSOR_OAKS_LAB, 9, PalletTown_ProfessorOaksLab_EventScript_RatePokedex
 	goto_if_eq VAR_MAP_SCENE_PALLET_TOWN_PROFESSOR_OAKS_LAB, 8, PalletTown_ProfessorOaksLab_EventScript_MonsAroundWorldWait
 	goto_if_set FLAG_SYS_GAME_CLEAR, PalletTown_ProfessorOaksLab_EventScript_TryStartNationalDexScene
@@ -577,6 +599,11 @@ PalletTown_ProfessorOaksLab_EventScript_ProfOak::
 	goto_if_eq VAR_MAP_SCENE_PALLET_TOWN_PROFESSOR_OAKS_LAB, 4, PalletTown_ProfessorOaksLab_EventScript_OakBattleMonForItToGrow
 	goto_if_eq VAR_MAP_SCENE_PALLET_TOWN_PROFESSOR_OAKS_LAB, 3, PalletTown_ProfessorOaksLab_EventScript_OakCanReachNextTownWithMon
 	msgbox PalletTown_ProfessorOaksLab_Text_OakWhichOneWillYouChoose
+	release
+	end
+
+PalletTown_ProfessorOaksLab_EventScript_OakWaitingForJohtoChoice::
+	msgbox PalletTown_ProfessorOaksLab_Text_OakWaitingForJohtoChoice
 	release
 	end
 
@@ -657,7 +684,7 @@ PalletTown_ProfessorOaksLab_EventScript_ReceiveDexScene::
 	special SetUnlockedPokedexFlags
 	setvar VAR_MAP_SCENE_POKEMON_CENTER_TEALA, 1
 	msgbox PalletTown_ProfessorOaksLab_Text_OakCatchMonsForDataTakeThese
-	giveitem_msg PalletTown_ProfessorOaksLab_Text_ReceivedFivePokeBalls, ITEM_POKE_BALL, 5
+	giveitem_msg PalletTown_ProfessorOaksLab_Text_ReceivedFivePokeBalls, ITEM_POKE_BALL, 20
 	msgbox PalletTown_ProfessorOaksLab_Text_OakExplainCatching
 	famechecker FAMECHECKER_OAK, 1
 	msgbox PalletTown_ProfessorOaksLab_Text_OakCompleteMonGuideWasMyDream
@@ -1069,6 +1096,7 @@ PalletTown_ProfessorOaksLab_Movement_RivalExit::
 PalletTown_ProfessorOaksLab_EventScript_BulbasaurBall::
 	lock
 	faceplayer
+	goto_if_eq VAR_MAP_SCENE_PALLET_TOWN_PROFESSOR_OAKS_LAB, 10, PalletTown_ProfessorOaksLab_EventScript_ChikoritaBall
 	setvar PLAYER_STARTER_NUM, 0
 	setvar PLAYER_STARTER_SPECIES, SPECIES_BULBASAUR
 	setvar RIVAL_STARTER_SPECIES, SPECIES_CHARMANDER
@@ -1126,6 +1154,22 @@ PalletTown_ProfessorOaksLab_EventScript_ChoseStarter::
 	waitmessage
 	playfanfare MUS_OBTAIN_KEY_ITEM
 	waitfanfare
+
+	textcolor NPC_TEXT_COLOR_MALE
+	msgbox PalletTown_ProfessorOaksLab_Text_OakGiveRunningShoes
+
+	textcolor NPC_TEXT_COLOR_NEUTRAL
+	playfanfare MUS_OBTAIN_KEY_ITEM
+	message PalletTown_ProfessorOaksLab_Text_ReceivedRunningShoesFromOak
+	waitmessage
+	waitfanfare
+
+	setflag FLAG_SYS_B_DASH
+
+	signmsg
+	msgbox PalletTown_ProfessorOaksLab_Text_ExplainRunningShoes
+	normalmsg
+
 	msgbox Text_GiveNicknameToThisMon, MSGBOX_YESNO
 	goto_if_eq VAR_RESULT, YES, EventScript_GiveNicknameToStarter
 	goto_if_eq VAR_RESULT, NO, PalletTown_ProfessorOaksLab_EventScript_RivalPicksStarter
@@ -1212,6 +1256,7 @@ PalletTown_ProfessorOaksLab_Movement_RivalWalksToBulbasaur::
 PalletTown_ProfessorOaksLab_EventScript_SquirtleBall::
 	lock
 	faceplayer
+	goto_if_eq VAR_MAP_SCENE_PALLET_TOWN_PROFESSOR_OAKS_LAB, 10, PalletTown_ProfessorOaksLab_EventScript_TotodileBall
 	setvar PLAYER_STARTER_NUM, 1
 	setvar PLAYER_STARTER_SPECIES, SPECIES_SQUIRTLE
 	setvar RIVAL_STARTER_SPECIES, SPECIES_BULBASAUR
@@ -1225,6 +1270,7 @@ PalletTown_ProfessorOaksLab_EventScript_SquirtleBall::
 PalletTown_ProfessorOaksLab_EventScript_CharmanderBall::
 	lock
 	faceplayer
+	goto_if_eq VAR_MAP_SCENE_PALLET_TOWN_PROFESSOR_OAKS_LAB, 10, PalletTown_ProfessorOaksLab_EventScript_CyndaquilBall
 	setvar PLAYER_STARTER_NUM, 2
 	setvar PLAYER_STARTER_SPECIES, SPECIES_CHARMANDER
 	setvar RIVAL_STARTER_SPECIES, SPECIES_SQUIRTLE
@@ -1298,4 +1344,106 @@ PalletTown_ProfessorOaksLab_EventScript_RightSign::
 PalletTown_ProfessorOaksLab_EventScript_RightSignAlt::
 	msgbox PalletTown_ProfessorOaksLab_Text_AllMonTypesHaveStrongAndWeakPoints
 	releaseall
+	end
+
+PalletTown_ProfessorOaksLab_EventScript_ChikoritaBall::
+	setvar PLAYER_STARTER_SPECIES, SPECIES_CHIKORITA
+	goto PalletTown_ProfessorOaksLab_EventScript_ConfirmJohtoStarter
+	end
+
+PalletTown_ProfessorOaksLab_EventScript_TotodileBall::
+	setvar PLAYER_STARTER_SPECIES, SPECIES_TOTODILE
+	goto PalletTown_ProfessorOaksLab_EventScript_ConfirmJohtoStarter
+	end
+
+PalletTown_ProfessorOaksLab_EventScript_CyndaquilBall::
+	setvar PLAYER_STARTER_SPECIES, SPECIES_CYNDAQUIL
+	goto PalletTown_ProfessorOaksLab_EventScript_ConfirmJohtoStarter
+	end
+
+PalletTown_ProfessorOaksLab_EventScript_ConfirmJohtoStarter::
+	showmonpic PLAYER_STARTER_SPECIES, 10, 3
+	textcolor NPC_TEXT_COLOR_MALE
+	goto_if_eq PLAYER_STARTER_SPECIES, SPECIES_CHIKORITA, PalletTown_ProfessorOaksLab_EventScript_ConfirmChikorita
+	goto_if_eq PLAYER_STARTER_SPECIES, SPECIES_TOTODILE, PalletTown_ProfessorOaksLab_EventScript_ConfirmTotodile
+	goto_if_eq PLAYER_STARTER_SPECIES, SPECIES_CYNDAQUIL, PalletTown_ProfessorOaksLab_EventScript_ConfirmCyndaquil
+	end
+
+PalletTown_ProfessorOaksLab_EventScript_ConfirmChikorita::
+	msgbox PalletTown_ProfessorOaksLab_Text_ChooseChikorita, MSGBOX_YESNO
+	goto_if_eq VAR_RESULT, YES, PalletTown_ProfessorOaksLab_EventScript_TakeJohtoStarter
+	goto PalletTown_ProfessorOaksLab_EventScript_DeclineJohtoStarter
+	end
+
+PalletTown_ProfessorOaksLab_EventScript_ConfirmTotodile::
+	msgbox PalletTown_ProfessorOaksLab_Text_ChooseTotodile, MSGBOX_YESNO
+	goto_if_eq VAR_RESULT, YES, PalletTown_ProfessorOaksLab_EventScript_TakeJohtoStarter
+	goto PalletTown_ProfessorOaksLab_EventScript_DeclineJohtoStarter
+	end
+
+PalletTown_ProfessorOaksLab_EventScript_ConfirmCyndaquil::
+	msgbox PalletTown_ProfessorOaksLab_Text_ChooseCyndaquil, MSGBOX_YESNO
+	goto_if_eq VAR_RESULT, YES, PalletTown_ProfessorOaksLab_EventScript_TakeJohtoStarter
+	goto PalletTown_ProfessorOaksLab_EventScript_DeclineJohtoStarter
+	end
+
+PalletTown_ProfessorOaksLab_EventScript_DeclineJohtoStarter::
+	hidemonpic
+	release
+	end
+
+PalletTown_ProfessorOaksLab_EventScript_TakeJohtoStarter::
+	hidemonpic
+	copyvar VAR_TEMP_1, PLAYER_STARTER_SPECIES
+	givemon PLAYER_STARTER_SPECIES, 5
+	goto_if_eq VAR_RESULT, 0, PalletTown_ProfessorOaksLab_EventScript_ReceiveJohtoStarterParty
+	goto_if_eq VAR_RESULT, 1, PalletTown_ProfessorOaksLab_EventScript_ReceiveJohtoStarterPC
+	goto_if_eq VAR_RESULT, 2, PalletTown_ProfessorOaksLab_EventScript_NoRoomForJohtoStarter
+	end
+
+PalletTown_ProfessorOaksLab_EventScript_ReceiveJohtoStarterParty::
+	bufferspeciesname STR_VAR_1, PLAYER_STARTER_SPECIES
+	textcolor NPC_TEXT_COLOR_NEUTRAL
+	playfanfare MUS_LEVEL_UP
+	message PalletTown_ProfessorOaksLab_Text_ReceivedJohtoStarter
+	waitmessage
+	waitfanfare
+	msgbox Text_GiveNicknameToThisMon, MSGBOX_YESNO
+	goto_if_eq VAR_RESULT, NO, PalletTown_ProfessorOaksLab_EventScript_FinishJohtoStarter
+	call EventScript_GetGiftMonPartySlot
+	call EventScript_ChangePokemonNickname
+	goto PalletTown_ProfessorOaksLab_EventScript_FinishJohtoStarter
+	end
+
+PalletTown_ProfessorOaksLab_EventScript_ReceiveJohtoStarterPC::
+	bufferspeciesname STR_VAR_1, PLAYER_STARTER_SPECIES
+	textcolor NPC_TEXT_COLOR_NEUTRAL
+	playfanfare MUS_LEVEL_UP
+	message PalletTown_ProfessorOaksLab_Text_ReceivedJohtoStarter
+	waitmessage
+	waitfanfare
+	msgbox Text_GiveNicknameToThisMon, MSGBOX_YESNO
+	goto_if_eq VAR_RESULT, NO, PalletTown_ProfessorOaksLab_EventScript_JohtoStarterTransferredToPC
+	call EventScript_NameReceivedBoxMon
+	goto PalletTown_ProfessorOaksLab_EventScript_JohtoStarterTransferredToPC
+	end
+
+PalletTown_ProfessorOaksLab_EventScript_JohtoStarterTransferredToPC::
+	call EventScript_TransferredToPC
+	goto PalletTown_ProfessorOaksLab_EventScript_FinishJohtoStarter
+	end
+
+PalletTown_ProfessorOaksLab_EventScript_NoRoomForJohtoStarter::
+	msgbox PalletTown_ProfessorOaksLab_Text_NoRoomForJohtoStarter
+	release
+	end
+
+PalletTown_ProfessorOaksLab_EventScript_FinishJohtoStarter::
+	removeobject LOCALID_BULBASAUR_BALL
+	removeobject LOCALID_SQUIRTLE_BALL
+	removeobject LOCALID_CHARMANDER_BALL
+	setvar VAR_MAP_SCENE_PALLET_TOWN_PROFESSOR_OAKS_LAB, 9
+	textcolor NPC_TEXT_COLOR_MALE
+	msgbox PalletTown_ProfessorOaksLab_Text_OakAfterJohtoChoice
+	release
 	end

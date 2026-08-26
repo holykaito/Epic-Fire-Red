@@ -5376,11 +5376,25 @@ static void CB2_UseEvolutionStone(void)
 
 static bool8 MonCanEvolve(void)
 {
-    return GetEvolutionTargetSpecies(
-        &gPlayerParty[gPartyMenu.slotId],
-        EVO_MODE_ITEM_USE,
-        gSpecialVar_ItemId
-    ) != SPECIES_NONE;
+    switch (gSpecialVar_ItemId)
+    {
+    case ITEM_KINGS_ROCK:
+    case ITEM_METAL_COAT:
+    case ITEM_DRAGON_SCALE:
+    case ITEM_UP_GRADE:
+    case ITEM_DEEP_SEA_TOOTH:
+    case ITEM_DEEP_SEA_SCALE:
+    case ITEM_EVERSTONE:
+        return TRUE;
+    }
+
+    if (!IsNationalPokedexEnabled()
+     && GetEvolutionTargetSpecies(&gPlayerParty[gPartyMenu.slotId],
+                                  EVO_MODE_ITEM_USE,
+                                  gSpecialVar_ItemId) > KANTO_DEX_COUNT)
+        return FALSE;
+    else
+        return TRUE;
 }
 
 u8 GetItemEffectType(u16 item)
